@@ -13,6 +13,7 @@ module.exports = pool;
 // Test the database connection
 pool.connect((err, client, done) => {
     if (err) {
+        console.error('Error connecting to the database:', err);
         console.error('Database connection error:', err.stack);
         return;
     }

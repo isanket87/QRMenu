@@ -1,0 +1,121 @@
+{
+	"info": {
+		"_postman_id": "f7e4a3d0-1b1a-4b0a-8f0a-7e8d7f6a5b4c",
+		"name": "QRMenu Authentication API",
+		"description": "Collection for QRMenu Authentication API: User Registration and Login.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User Registration",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"fullName\": \"Jane Doe\",\n    \"businessName\": \"Jane's Innovations\",\n    \"phoneNumber\": \"098-765-4321\",\n    \"email\": \"jane.doe@example.com\",\n    \"password\": \"strongPassword456\",\n    \"city\": \"San Francisco\",\n    \"state\": \"CA\",\n    \"country\": \"USA\",\n    \"role\": \"user\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/auth/register",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{hostName}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"auth",
+						"register"
+					]
+				},
+				"description": "Registers a new user in the system.\n\n**Fields:**\n\n*   `fullName` (string, required): Full name of the user.\n*   `businessName` (string, optional): Name of the user's business.\n*   `phoneNumber` (string, optional): User's phone number.\n*   `email` (string, required): User's email address (must be unique).\n*   `password` (string, required): User's password (min 6 characters).\n*   `city` (string, optional): User's city.\n*   `state` (string, optional): User's state.\n*   `country` (string, optional): User's country.\n*   `role` (string, optional, defaults to 'user'): User's role (e.g., 'user', 'admin')."
+			},
+			"response": []
+		},
+		{
+			"name": "User Login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"jane.doe@example.com\",\n    \"password\": \"strongPassword456\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/auth/login",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{hostName}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				},
+				"description": "Logs in an existing user and returns a JWT.\n\n**Fields:**\n\n*   `email` (string, required): User's email address.\n*   `password` (string, required): User's password."
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "protocol",
+			"value": "http",
+			"type": "string"
+		},
+		{
+			"key": "hostName",
+			"value": "localhost",
+			"type": "string"
+		},
+		{
+			"key": "port",
+			"value": "5000",
+			"type": "string"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

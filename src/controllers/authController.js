@@ -36,13 +36,23 @@ const register = async (req, res) => {
         }
 
         const newUser = await userModel.createUser({
-            fullName, businessName, phoneNumber, email, password, city, state, country, role
+            fullName, businessName, phoneNumber, email, password, city, state, country, role: role || 'user'
         });
 
-        const token = jwt.sign({ id: newUser.id, role: newUser.role }, JWT_SECRET, { expiresIn: '1h' });
-        res.status(201).json({ token, user: { id: newUser.id, fullName: newUser.full_name, email: newUser.email, role: newUser.role } });
+        // Respond with a success message instead of token and user details
+        res.status(201).json({ message: 'User registered successfully. Please login.' });
     } catch (error) {
         console.error('Registration error:', error);
+        if (error.code === '23505') { // PostgreSQL unique_violation error code
+            if (error.constraint === 'users_email_key') { // Common constraint name for unique email
+                return res.status(400).json({ message: 'This email address is already registered.' });
+            }
+            if (error.constraint === 'users_phone_number_key') {
+                return res.status(400).json({ message: 'This phone number is already registered.' });
+            }
+            // Fallback for other unique constraints not explicitly handled
+            return res.status(400).json({ message: 'A value provided is already in use. Please check your input.' });
+        }
         res.status(500).json({ message: 'Server error during registration.' });
     }
 };

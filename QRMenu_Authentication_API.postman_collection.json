@@ -1,8 +1,8 @@
 {
 	"info": {
 		"_postman_id": "f7e4a3d0-1b1a-4b0a-8f0a-7e8d7f6a5b4c",
-		"name": "QRMenu Authentication API",
-		"description": "Collection for QRMenu Authentication API: User Registration and Login.",
+		"name": "QRMenu API",
+		"description": "Collection for QRMenu API: Authentication, Restaurants, Categories, Dishes.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -39,7 +39,7 @@
 						"register"
 					]
 				},
-				"description": "Registers a new user in the system.\n\n**Fields:**\n\n*   `fullName` (string, required): Full name of the user.\n*   `businessName` (string, optional): Name of the user's business.\n*   `phoneNumber` (string, optional): User's phone number.\n*   `email` (string, required): User's email address (must be unique).\n*   `password` (string, required): User's password (min 6 characters).\n*   `city` (string, optional): User's city.\n*   `state` (string, optional): User's state.\n*   `country` (string, optional): User's country.\n*   `role` (string, optional, defaults to 'user'): User's role (e.g., 'user', 'admin')."
+				"description": "Registers a new user in the system."
 			},
 			"response": []
 		},
@@ -76,46 +76,435 @@
 						"login"
 					]
 				},
-				"description": "Logs in an existing user and returns a JWT.\n\n**Fields:**\n\n*   `email` (string, required): User's email address.\n*   `password` (string, required): User's password."
+				"description": "Logs in an existing user and returns a JWT."
+			},
+			"response": []
+		},
+		{
+			"name": "Create Restaurant",
+			"request": {
+				"method": "POST",
+				"header": [
+					{ "key": "Content-Type", "value": "application/json", "type": "text" },
+					{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Pizza Palace\",\n  \"address\": \"123 Main St\",\n  \"description\": \"Best pizza in town\",\n  \"opening_time\": \"09:00\",\n  \"closing_time\": \"23:00\",\n  \"type\": \"restaurant\",\n  \"food_type\": \"both\",\n  \"phone_number\": \"1234567890\",\n  \"email\": \"info@pizza.com\",\n  \"website\": \"https://pizza.com\",\n  \"image_url\": \"https://img.com/pizza.jpg\"\n}"
+				},
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/restaurants",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"port": "{{port}}",
+					"path": ["api", "restaurants"]
+				},
+				"description": "Create a new restaurant (admin/super_admin only)."
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Restaurants",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/restaurants",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"port": "{{port}}",
+					"path": ["api", "restaurants"]
+				},
+				"description": "Get all restaurants."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Restaurant by ID",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/restaurants/1",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"port": "{{port}}",
+					"path": ["api", "restaurants", "1"]
+				},
+				"description": "Get restaurant by ID."
+			},
+			"response": []
+		},
+		{
+			"name": "Search Restaurants",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/restaurants/search?q=pizza",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"port": "{{port}}",
+					"path": ["api", "restaurants", "search"],
+					"query": [{ "key": "q", "value": "pizza" }]
+				},
+				"description": "Search restaurants by name or address."
+			},
+			"response": []
+		},
+		{
+			"name": "Update Restaurant",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{ "key": "Content-Type", "value": "application/json", "type": "text" },
+					{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Updated Pizza Palace\"\n}"
+				},
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/restaurants/1",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"port": "{{port}}",
+					"path": ["api", "restaurants", "1"]
+				},
+				"description": "Update restaurant (admin/super_admin only)."
+			},
+			"response": []
+		},
+		{
+			"name": "Soft Delete Restaurant",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+				],
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/restaurants/1",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"port": "{{port}}",
+					"path": ["api", "restaurants", "1"]
+				},
+				"description": "Soft delete restaurant (admin/super_admin only)."
+			},
+			"response": []
+		},
+		{
+			"name": "Create Category",
+			"request": {
+				"method": "POST",
+				"header": [
+					{ "key": "Content-Type", "value": "application/json", "type": "text" },
+					{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"restaurant_id\": 1,\n  \"name\": \"Starters\",\n  \"description\": \"Begin your meal\",\n  \"display_order\": 1\n}"
+				},
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/categories",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"port": "{{port}}",
+					"path": ["api", "categories"]
+				},
+				"description": "Create a new category (admin/super_admin only)."
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Categories for a Restaurant",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/categories/restaurant/1",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"port": "{{port}}",
+					"path": ["api", "categories", "restaurant", "1"]
+				},
+				"description": "Get all categories for a restaurant."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Category by ID",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/categories/1",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"port": "{{port}}",
+					"path": ["api", "categories", "1"]
+				},
+				"description": "Get category by ID."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Category by Name",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/categories/by-name?restaurant_id=1&name=Starters",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"port": "{{port}}",
+					"path": ["api", "categories", "by-name"],
+					"query": [
+						{ "key": "restaurant_id", "value": "1" },
+						{ "key": "name", "value": "Starters" }
+					]
+				},
+				"description": "Get category by name for a restaurant."
+			},
+			"response": []
+		},
+		{
+			"name": "Search Categories",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/categories/search?restaurant_id=1&q=star",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"port": "{{port}}",
+					"path": ["api", "categories", "search"],
+					"query": [
+						{ "key": "restaurant_id", "value": "1" },
+						{ "key": "q", "value": "star" }
+					]
+				},
+				"description": "Search categories by name for a restaurant."
+			},
+			"response": []
+		},
+		{
+			"name": "Update Category",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{ "key": "Content-Type", "value": "application/json", "type": "text" },
+					{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Updated Starters\"\n}"
+				},
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/categories/1",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"port": "{{port}}",
+					"path": ["api", "categories", "1"]
+				},
+				"description": "Update category (admin/super_admin only)."
+			},
+			"response": []
+		},
+		{
+			"name": "Soft Delete Category",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+				],
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/categories/1",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"port": "{{port}}",
+					"path": ["api", "categories", "1"]
+				},
+				"description": "Soft delete category (admin/super_admin only)."
+			},
+			"response": []
+		},
+		{
+			"name": "Create Dish",
+			"request": {
+				"method": "POST",
+				"header": [
+					{ "key": "Content-Type", "value": "application/json", "type": "text" },
+					{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"restaurant_id\": 1,\n  \"category_id\": 2,\n  \"name\": \"French Fries\",\n  \"description\": \"Crispy fries\",\n  \"price\": 99.99,\n  \"image_url\": \"https://img.com/fries.jpg\",\n  \"is_available\": true\n}"
+				},
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/dishes",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"port": "{{port}}",
+					"path": ["api", "dishes"]
+				},
+				"description": "Create a new dish (admin/super_admin only)."
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Dishes for a Restaurant",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/dishes?restaurant_id=1",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"port": "{{port}}",
+					"path": ["api", "dishes"],
+					"query": [{ "key": "restaurant_id", "value": "1" }]
+				},
+				"description": "Get all dishes for a restaurant."
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Dishes for a Category",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/dishes?restaurant_id=1&category_id=2",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"port": "{{port}}",
+					"path": ["api", "dishes"],
+					"query": [
+						{ "key": "restaurant_id", "value": "1" },
+						{ "key": "category_id", "value": "2" }
+					]
+				},
+				"description": "Get all dishes for a category."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Independent Dishes (No Category)",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/dishes/independent?restaurant_id=1",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"port": "{{port}}",
+					"path": ["api", "dishes", "independent"],
+					"query": [{ "key": "restaurant_id", "value": "1" }]
+				},
+				"description": "Get all independent dishes (no category) for a restaurant."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Dish by ID",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/dishes/1",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"port": "{{port}}",
+					"path": ["api", "dishes", "1"]
+				},
+				"description": "Get dish by ID."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Dish by Name",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/dishes/by-name?restaurant_id=1&name=French Fries",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"port": "{{port}}",
+					"path": ["api", "dishes", "by-name"],
+					"query": [
+						{ "key": "restaurant_id", "value": "1" },
+						{ "key": "name", "value": "French Fries" }
+					]
+				},
+				"description": "Get dish by name for a restaurant."
+			},
+			"response": []
+		},
+		{
+			"name": "Search Dishes",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/dishes/search?restaurant_id=1&q=fries",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"port": "{{port}}",
+					"path": ["api", "dishes", "search"],
+					"query": [
+						{ "key": "restaurant_id", "value": "1" },
+						{ "key": "q", "value": "fries" }
+					]
+				},
+				"description": "Search dishes by name for a restaurant."
+			},
+			"response": []
+		},
+		{
+			"name": "Update Dish",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{ "key": "Content-Type", "value": "application/json", "type": "text" },
+					{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Updated French Fries\"\n}"
+				},
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/dishes/1",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"port": "{{port}}",
+					"path": ["api", "dishes", "1"]
+				},
+				"description": "Update dish (admin/super_admin only)."
+			},
+			"response": []
+		},
+		{
+			"name": "Soft Delete Dish",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+				],
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/dishes/1",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"port": "{{port}}",
+					"path": ["api", "dishes", "1"]
+				},
+				"description": "Soft delete dish (admin/super_admin only)."
 			},
 			"response": []
 		}
 	],
 	"variable": [
-		{
-			"key": "protocol",
-			"value": "http",
-			"type": "string"
-		},
-		{
-			"key": "hostName",
-			"value": "localhost",
-			"type": "string"
-		},
-		{
-			"key": "port",
-			"value": "5000",
-			"type": "string"
-		}
+		{ "key": "protocol", "value": "http", "type": "string" },
+		{ "key": "hostName", "value": "localhost", "type": "string" },
+		{ "key": "port", "value": "5000", "type": "string" },
+		{ "key": "token", "value": "", "type": "string" }
 	],
 	"event": [
 		{
 			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
+			"script": { "type": "text/javascript", "exec": [""] }
 		},
 		{
 			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
+			"script": { "type": "text/javascript", "exec": [""] }
 		}
 	]
 }

@@ -6,7 +6,6 @@ const rateLimit = require('express-rate-limit');
 require('dotenv').config(); // Load environment variables from .env
 
 const authRoutes = require('./routes/authRoutes'); // Import auth routes
-const menuRoutes = require('./routes/menuRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const dishRoutes = require('./routes/dishRoutes'); // Import dish routes
 const restaurantRoutes = require('./routes/restaurantRoutes'); // Import restaurant routes
@@ -36,7 +35,6 @@ const limiter = rateLimit({
 app.use(limiter);
 
 app.use('/api/auth', authRoutes); // Add auth routes, prefixed with /api/auth
-app.use('/api', menuRoutes); // All routes defined in menuRoutes will be prefixed with /api
 app.use('/api/categories', categoryRoutes); // Add category routes, prefixed with /api/categories
 app.use('/api/dishes', dishRoutes);
 app.use('/api/restaurants', restaurantRoutes);

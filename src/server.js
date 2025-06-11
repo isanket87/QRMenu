@@ -9,6 +9,8 @@ const authRoutes = require('./routes/authRoutes'); // Import auth routes
 const categoryRoutes = require('./routes/categoryRoutes');
 const dishRoutes = require('./routes/dishRoutes'); // Import dish routes
 const restaurantRoutes = require('./routes/restaurantRoutes'); // Import restaurant routes
+const responseFormatter = require('./middleware/responseFormatter');
+
 // No need to explicitly import db.js here, as it connects automatically
 // and its 'pool' instance is used directly by controllers.
 
@@ -24,6 +26,7 @@ app.use(cors());
 // })); // Enable CORS for all routes (important for front-end)
 app.use(express.json()); // Parse JSON request bodies
 app.use(helmet()); // Secure HTTP headers
+app.use(responseFormatter); // Add this line before your routes
 
 // Rate Limiting
 const limiter = rateLimit({
@@ -41,6 +44,15 @@ app.use('/api/restaurants', restaurantRoutes);
 
 app.get('/', (req, res) => {
     res.send('Restaurant Menu Backend is running!');
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+    res.status(err.status || 500).send({
+        success: false,
+        message: err.message || 'Internal Server Error',
+        data: { data: [] }
+    });
 });
 
 // Start the server

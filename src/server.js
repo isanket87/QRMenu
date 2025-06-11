@@ -16,11 +16,13 @@ const restaurantRoutes = require('./routes/restaurantRoutes'); // Import restaur
 const app = express();
 const PORT = process.env.PORT || 5000; // Use port from .env or default to 5000
 
+app.use(cors());
+
 // Middleware
-app.use(cors({
-    origin: ['https://your-frontend.com'],
-    credentials: true
-})); // Enable CORS for all routes (important for front-end)
+// app.use(cors({
+//     origin: ['https://your-frontend.com'],
+//     credentials: true
+// })); // Enable CORS for all routes (important for front-end)
 app.use(express.json()); // Parse JSON request bodies
 app.use(helmet()); // Secure HTTP headers
 

@@ -4,7 +4,8 @@ const categoryController = require('../controllers/categoryController');
 const authorizeRoles = require('../middleware/roleMiddleware');
 
 // Create
-router.post('/', authorizeRoles('admin', 'super_admin'), categoryController.createCategory);
+//router.post('/', authorizeRoles('admin', 'super_admin'), categoryController.createCategory);
+router.post('/', categoryController.createCategory);
 
 // Get all for a restaurant
 router.get('/restaurant/:restaurant_id', categoryController.getCategoriesByRestaurant);
@@ -19,7 +20,8 @@ router.get('/by-name', categoryController.getCategoryByName);
 router.get('/search', categoryController.searchCategories);
 
 // Update
-router.put('/:id', authorizeRoles('admin', 'super_admin'), categoryController.updateCategory);
+//router.put('/:id', authorizeRoles('admin', 'super_admin'), categoryController.updateCategory);
+router.put('/:id', categoryController.updateCategory);
 
 // Soft delete
 router.delete('/:id', authorizeRoles('admin', 'super_admin'), categoryController.softDeleteCategory);

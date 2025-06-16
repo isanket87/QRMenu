@@ -27,12 +27,11 @@
 					}
 				},
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/auth/register",
+					"raw": "{{protocol}}://{{hostName}}/api/auth/register",
 					"protocol": "{{protocol}}",
 					"host": [
 						"{{hostName}}"
 					],
-					"port": "{{port}}",
 					"path": [
 						"api",
 						"auth",
@@ -64,12 +63,11 @@
 					}
 				},
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/auth/login",
+					"raw": "{{protocol}}://{{hostName}}/api/auth/login",
 					"protocol": "{{protocol}}",
 					"host": [
 						"{{hostName}}"
 					],
-					"port": "{{port}}",
 					"path": [
 						"api",
 						"auth",
@@ -93,10 +91,9 @@
 					"raw": "{\n  \"name\": \"Pizza Palace\",\n  \"address\": \"123 Main St\",\n  \"description\": \"Best pizza in town\",\n  \"opening_time\": \"09:00\",\n  \"closing_time\": \"23:00\",\n  \"type\": \"restaurant\",\n  \"food_type\": \"both\",\n  \"phone_number\": \"1234567890\",\n  \"email\": \"info@pizza.com\",\n  \"website\": \"https://pizza.com\",\n  \"image_url\": \"https://img.com/pizza.jpg\"\n}"
 				},
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/restaurants",
+					"raw": "{{protocol}}://{{hostName}}/api/restaurants",
 					"protocol": "{{protocol}}",
 					"host": ["{{hostName}}"],
-					"port": "{{port}}",
 					"path": ["api", "restaurants"]
 				},
 				"description": "Create a new restaurant (admin/super_admin only)."
@@ -108,10 +105,9 @@
 			"request": {
 				"method": "GET",
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/restaurants",
+					"raw": "{{protocol}}://{{hostName}}/api/restaurants",
 					"protocol": "{{protocol}}",
 					"host": ["{{hostName}}"],
-					"port": "{{port}}",
 					"path": ["api", "restaurants"]
 				},
 				"description": "Get all restaurants."
@@ -123,10 +119,9 @@
 			"request": {
 				"method": "GET",
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/restaurants/1",
+					"raw": "{{protocol}}://{{hostName}}/api/restaurants/1",
 					"protocol": "{{protocol}}",
 					"host": ["{{hostName}}"],
-					"port": "{{port}}",
 					"path": ["api", "restaurants", "1"]
 				},
 				"description": "Get restaurant by ID."
@@ -138,10 +133,9 @@
 			"request": {
 				"method": "GET",
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/restaurants/search?q=pizza",
+					"raw": "{{protocol}}://{{hostName}}/api/restaurants/search?q=pizza",
 					"protocol": "{{protocol}}",
 					"host": ["{{hostName}}"],
-					"port": "{{port}}",
 					"path": ["api", "restaurants", "search"],
 					"query": [{ "key": "q", "value": "pizza" }]
 				},
@@ -162,10 +156,9 @@
 					"raw": "{\n  \"name\": \"Updated Pizza Palace\"\n}"
 				},
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/restaurants/1",
+					"raw": "{{protocol}}://{{hostName}}/api/restaurants/1",
 					"protocol": "{{protocol}}",
 					"host": ["{{hostName}}"],
-					"port": "{{port}}",
 					"path": ["api", "restaurants", "1"]
 				},
 				"description": "Update restaurant (admin/super_admin only)."
@@ -180,10 +173,9 @@
 					{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
 				],
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/restaurants/1",
+					"raw": "{{protocol}}://{{hostName}}/api/restaurants/1",
 					"protocol": "{{protocol}}",
 					"host": ["{{hostName}}"],
-					"port": "{{port}}",
 					"path": ["api", "restaurants", "1"]
 				},
 				"description": "Soft delete restaurant (admin/super_admin only)."
@@ -203,10 +195,9 @@
 					"raw": "{\n  \"restaurant_id\": 1,\n  \"name\": \"Starters\",\n  \"description\": \"Begin your meal\",\n  \"display_order\": 1\n}"
 				},
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/categories",
+					"raw": "{{protocol}}://{{hostName}}/api/categories",
 					"protocol": "{{protocol}}",
 					"host": ["{{hostName}}"],
-					"port": "{{port}}",
 					"path": ["api", "categories"]
 				},
 				"description": "Create a new category (admin/super_admin only)."
@@ -218,10 +209,9 @@
 			"request": {
 				"method": "GET",
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/categories/restaurant/1",
+					"raw": "{{protocol}}://{{hostName}}/api/categories/restaurant/1",
 					"protocol": "{{protocol}}",
 					"host": ["{{hostName}}"],
-					"port": "{{port}}",
 					"path": ["api", "categories", "restaurant", "1"]
 				},
 				"description": "Get all categories for a restaurant."
@@ -233,10 +223,9 @@
 			"request": {
 				"method": "GET",
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/categories/1",
+					"raw": "{{protocol}}://{{hostName}}/api/categories/1",
 					"protocol": "{{protocol}}",
 					"host": ["{{hostName}}"],
-					"port": "{{port}}",
 					"path": ["api", "categories", "1"]
 				},
 				"description": "Get category by ID."
@@ -248,10 +237,9 @@
 			"request": {
 				"method": "GET",
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/categories/by-name?restaurant_id=1&name=Starters",
+					"raw": "{{protocol}}://{{hostName}}/api/categories/by-name?restaurant_id=1&name=Starters",
 					"protocol": "{{protocol}}",
 					"host": ["{{hostName}}"],
-					"port": "{{port}}",
 					"path": ["api", "categories", "by-name"],
 					"query": [
 						{ "key": "restaurant_id", "value": "1" },
@@ -267,10 +255,9 @@
 			"request": {
 				"method": "GET",
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/categories/search?restaurant_id=1&q=star",
+					"raw": "{{protocol}}://{{hostName}}/api/categories/search?restaurant_id=1&q=star",
 					"protocol": "{{protocol}}",
 					"host": ["{{hostName}}"],
-					"port": "{{port}}",
 					"path": ["api", "categories", "search"],
 					"query": [
 						{ "key": "restaurant_id", "value": "1" },
@@ -294,10 +281,9 @@
 					"raw": "{\n  \"name\": \"Updated Starters\"\n}"
 				},
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/categories/1",
+					"raw": "{{protocol}}://{{hostName}}/api/categories/1",
 					"protocol": "{{protocol}}",
 					"host": ["{{hostName}}"],
-					"port": "{{port}}",
 					"path": ["api", "categories", "1"]
 				},
 				"description": "Update category (admin/super_admin only)."
@@ -312,10 +298,9 @@
 					{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
 				],
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/categories/1",
+					"raw": "{{protocol}}://{{hostName}}/api/categories/1",
 					"protocol": "{{protocol}}",
 					"host": ["{{hostName}}"],
-					"port": "{{port}}",
 					"path": ["api", "categories", "1"]
 				},
 				"description": "Soft delete category (admin/super_admin only)."
@@ -335,10 +320,9 @@
 					"raw": "{\n  \"restaurant_id\": 1,\n  \"category_id\": 2,\n  \"name\": \"French Fries\",\n  \"description\": \"Crispy fries\",\n  \"price\": 99.99,\n  \"image_url\": \"https://img.com/fries.jpg\",\n  \"is_available\": true\n}"
 				},
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/dishes",
+					"raw": "{{protocol}}://{{hostName}}/api/dishes",
 					"protocol": "{{protocol}}",
 					"host": ["{{hostName}}"],
-					"port": "{{port}}",
 					"path": ["api", "dishes"]
 				},
 				"description": "Create a new dish (admin/super_admin only)."
@@ -350,10 +334,9 @@
 			"request": {
 				"method": "GET",
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/dishes?restaurant_id=1",
+					"raw": "{{protocol}}://{{hostName}}/api/dishes?restaurant_id=1",
 					"protocol": "{{protocol}}",
 					"host": ["{{hostName}}"],
-					"port": "{{port}}",
 					"path": ["api", "dishes"],
 					"query": [{ "key": "restaurant_id", "value": "1" }]
 				},
@@ -366,10 +349,9 @@
 			"request": {
 				"method": "GET",
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/dishes?restaurant_id=1&category_id=2",
+					"raw": "{{protocol}}://{{hostName}}/api/dishes?restaurant_id=1&category_id=2",
 					"protocol": "{{protocol}}",
 					"host": ["{{hostName}}"],
-					"port": "{{port}}",
 					"path": ["api", "dishes"],
 					"query": [
 						{ "key": "restaurant_id", "value": "1" },
@@ -385,10 +367,9 @@
 			"request": {
 				"method": "GET",
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/dishes/independent?restaurant_id=1",
+					"raw": "{{protocol}}://{{hostName}}/api/dishes/independent?restaurant_id=1",
 					"protocol": "{{protocol}}",
 					"host": ["{{hostName}}"],
-					"port": "{{port}}",
 					"path": ["api", "dishes", "independent"],
 					"query": [{ "key": "restaurant_id", "value": "1" }]
 				},
@@ -401,10 +382,9 @@
 			"request": {
 				"method": "GET",
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/dishes/1",
+					"raw": "{{protocol}}://{{hostName}}/api/dishes/1",
 					"protocol": "{{protocol}}",
 					"host": ["{{hostName}}"],
-					"port": "{{port}}",
 					"path": ["api", "dishes", "1"]
 				},
 				"description": "Get dish by ID."
@@ -416,10 +396,9 @@
 			"request": {
 				"method": "GET",
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/dishes/by-name?restaurant_id=1&name=French Fries",
+					"raw": "{{protocol}}://{{hostName}}/api/dishes/by-name?restaurant_id=1&name=French Fries",
 					"protocol": "{{protocol}}",
 					"host": ["{{hostName}}"],
-					"port": "{{port}}",
 					"path": ["api", "dishes", "by-name"],
 					"query": [
 						{ "key": "restaurant_id", "value": "1" },
@@ -435,10 +414,9 @@
 			"request": {
 				"method": "GET",
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/dishes/search?restaurant_id=1&q=fries",
+					"raw": "{{protocol}}://{{hostName}}/api/dishes/search?restaurant_id=1&q=fries",
 					"protocol": "{{protocol}}",
 					"host": ["{{hostName}}"],
-					"port": "{{port}}",
 					"path": ["api", "dishes", "search"],
 					"query": [
 						{ "key": "restaurant_id", "value": "1" },
@@ -462,10 +440,9 @@
 					"raw": "{\n  \"name\": \"Updated French Fries\"\n}"
 				},
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/dishes/1",
+					"raw": "{{protocol}}://{{hostName}}/api/dishes/1",
 					"protocol": "{{protocol}}",
 					"host": ["{{hostName}}"],
-					"port": "{{port}}",
 					"path": ["api", "dishes", "1"]
 				},
 				"description": "Update dish (admin/super_admin only)."
@@ -480,21 +457,126 @@
 					{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
 				],
 				"url": {
-					"raw": "{{protocol}}://{{hostName}}:{{port}}/api/dishes/1",
+					"raw": "{{protocol}}://{{hostName}}/api/dishes/1",
 					"protocol": "{{protocol}}",
 					"host": ["{{hostName}}"],
-					"port": "{{port}}",
 					"path": ["api", "dishes", "1"]
 				},
 				"description": "Soft delete dish (admin/super_admin only)."
 			},
 			"response": []
+		},
+		{
+			"name": "User Management",
+			"item": [
+				{
+					"name": "Add User (Admin Only)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fullName\": \"John Smith\",\n    \"businessName\": \"Smith's Cafe\",\n    \"phoneNumber\": \"123-456-7890\",\n    \"email\": \"john.smith@example.com\",\n    \"password\": \"securePassword123\",\n    \"city\": \"New York\",\n    \"state\": \"NY\",\n    \"country\": \"USA\",\n    \"role\": \"user\",\n    \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/user",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "user"]
+						},
+						"description": "Add a new user (admin/super_admin only)."
+					},
+					"response": []
+				},
+				{
+					"name": "Update User (Admin Only)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fullName\": \"Updated Name\",\n    \"businessName\": \"Updated Business\",\n    \"phoneNumber\": \"987-654-3210\",\n    \"email\": \"updated.email@example.com\",\n    \"password\": \"newPassword456\",\n    \"city\": \"Los Angeles\",\n    \"state\": \"CA\",\n    \"country\": \"USA\",\n    \"role\": \"admin\",\n    \"isActive\": false\n}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/user/1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "user", "1"]
+						},
+						"description": "Update a user by ID (admin/super_admin only)."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User (Admin Only)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/user/1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "user", "1"]
+						},
+						"description": "Delete a user by ID (admin/super_admin only)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users (Admin Only, Paginated)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/users?page=1&limit=10",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "users"],
+							"query": [
+								{ "key": "page", "value": "1" },
+								{ "key": "limit", "value": "10" }
+							]
+						},
+						"description": "Get all users with pagination (admin/super_admin only)."
+					},
+					"response": []
+				},
+				{
+					"name": "Search Users (Admin Only)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/users/search?q=john",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "users", "search"],
+							"query": [
+								{ "key": "q", "value": "john" }
+							]
+						},
+						"description": "Search users by name or email (admin/super_admin only)."
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"variable": [
 		{ "key": "protocol", "value": "http", "type": "string" },
 		{ "key": "hostName", "value": "localhost", "type": "string" },
-		{ "key": "port", "value": "5000", "type": "string" },
 		{ "key": "token", "value": "", "type": "string" }
 	],
 	"event": [

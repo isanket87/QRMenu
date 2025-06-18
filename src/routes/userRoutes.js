@@ -7,7 +7,7 @@ const router = express.Router();
 // User management routes (admin/super_admin only)
 router.post(
     '/',
-   // authorizeRoles('admin', 'super_admin'),
+    //authorizeRoles('admin', 'super_admin'), // It's good practice to keep this uncommented for security
     userController.addUser
 );
 
@@ -26,13 +26,14 @@ router.delete(
 router.get(
     '/',
     authorizeRoles('admin', 'super_admin'),
-    userController.getAllUsers // Supports pagination via query params: ?page=1&limit=10
+    userController.getAllUsers // Supports pagination (e.g., ?page=1&limit=10) and search (e.g., ?q=searchTerm)
 );
 
+// Get user by ID (admin/super_admin only)
 router.get(
-    '/search',
+    '/:id',
     authorizeRoles('admin', 'super_admin'),
-    userController.searchUsers // Supports search via query param: ?q=searchTerm
+    userController.getUserById
 );
 
 module.exports = router;

@@ -81,37 +81,56 @@ exports.deleteUser = async (req, res) => {
 
 // Get all users with pagination
 exports.getAllUsers = async (req, res) => {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
     const offset = (page - 1) * limit;
+    const searchQuery = req.query.q || '';
+
+    let usersQuery = `SELECT ${userFieldsToReturn} FROM users`;
+    let countQuery = `SELECT COUNT(*) FROM users`;
+    const queryParams = [];
+
+    if (searchQuery) {
+        const searchCondition = ` WHERE (full_name ILIKE $1 OR email ILIKE $1)`;
+        usersQuery += searchCondition;
+        countQuery += searchCondition;
+        queryParams.push(`%${searchQuery}%`);
+    }
+
+    usersQuery += ` ORDER BY id LIMIT $${queryParams.length + 1} OFFSET $${queryParams.length + 2}`;
+    queryParams.push(limit, offset);
+
     try {
-        const usersResult = await pool.query(
-            `SELECT ${userFieldsToReturn} FROM users ORDER BY id LIMIT $1 OFFSET $2`,
-            [limit, offset]
-        );
-        const countResult = await pool.query('SELECT COUNT(*) FROM users');
+        const usersResult = await pool.query(usersQuery, queryParams);
+        
+        // Adjust countQueryParams for the count query
+        const countQueryParams = searchQuery ? [`%${searchQuery}%`] : [];
+        const countResult = await pool.query(countQuery, countQueryParams);
+
         const total = parseInt(countResult.rows[0].count, 10);
         res.json({
             users: usersResult.rows,
             total,
             page,
-            pages: Math.ceil(total / limit)
+            pages: limit > 0 ? Math.ceil(total / limit) : 1
         });
     } catch (err) {
         res.status(400).json({ error: err.message });
     }
 };
 
-// Search users by name or email
-exports.searchUsers = async (req, res) => {
-    const q = req.query.q || '';
+// Get user by ID
+exports.getUserById = async (req, res) => {
+    const { id } = req.params;
     try {
         const result = await pool.query(
-            `SELECT ${userFieldsToReturn} FROM users WHERE
-                full_name ILIKE $1 OR email ILIKE $1 ORDER BY id`,
-            [`%${q}%`]
+            `SELECT ${userFieldsToReturn} FROM users WHERE id = $1`,
+            [id]
         );
-        res.json(result.rows);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.json(result.rows[0]);
     } catch (err) {
         res.status(400).json({ error: err.message });
     }

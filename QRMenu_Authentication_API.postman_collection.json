@@ -603,13 +603,14 @@
 							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
 						],
 						"url": {
-							"raw": "{{protocol}}://{{hostName}}/api/user?page=1&limit=10",
+							"raw": "{{protocol}}://{{hostName}}/api/user?page=1&limit=10&q=john",
 							"protocol": "{{protocol}}",
 							"host": ["{{hostName}}"],
 							"path": ["api", "user"],
 							"query": [
 								{ "key": "page", "value": "1" },
-								{ "key": "limit", "value": "10" }
+								{ "key": "limit", "value": "10" },
+								{ "key": "q", "value": "john", "description": "Optional: search term for full name or email", "disabled": true }
 							]
 						},
 						"description": "Get all users with pagination (admin/super_admin only)."
@@ -617,22 +618,26 @@
 					"response": []
 				},
 				{
-					"name": "Search Users (Admin Only)",
+					"name": "Get User by ID (Admin Only)",
 					"request": {
 						"method": "GET",
 						"header": [
 							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
 						],
 						"url": {
-							"raw": "{{protocol}}://{{hostName}}/api/user/search?q=john",
+							"raw": "{{protocol}}://{{hostName}}/api/user/1",
 							"protocol": "{{protocol}}",
 							"host": ["{{hostName}}"],
-							"path": ["api", "user", "search"],
-							"query": [
-								{ "key": "q", "value": "john" }
+							"path": ["api", "user", "1"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Replace with the actual User ID"
+								}
 							]
 						},
-						"description": "Search users by name or email (admin/super_admin only)."
+						"description": "Get a specific user by their ID (admin/super_admin only). Replace the '1' in the URL path with the actual user ID."
 					},
 					"response": []
 				}

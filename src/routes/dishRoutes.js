@@ -3,9 +3,8 @@ const router = express.Router();
 const dishController = require('../controllers/dishController');
 const authorizeRoles = require('../middleware/roleMiddleware');
 
-// Create dish
-//router.post('/', authorizeRoles('admin', 'super_admin'), dishController.createDish);
-router.post('/', dishController.createDish);
+// Create dish - accessible by admin or super_admin
+router.post('/', authorizeRoles('admin', 'super_admin'), dishController.createDish);
 
 // Get all dishes for a restaurant (optionally filter by category)
 router.get('/', dishController.getDishes);

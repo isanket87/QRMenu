@@ -4,9 +4,9 @@ const pool = require('../config/db');
 exports.createCategory = async (req, res) => {
     const { restaurant_id, name, description, display_order } = req.body;
     const created_by = req.user?.id;
-    if (!restaurant_id || !name) {
-        return res.status(400).json({ message: 'restaurant_id and name are required.' });
-    }
+    // if (!restaurant_id || !name) {
+    //     return res.status(400).json({ message: 'restaurant_id and name are required.' });
+    // }
     try {
         const result = await pool.query(
             `INSERT INTO categories (restaurant_id, name, description, display_order, created_by)
@@ -16,6 +16,25 @@ exports.createCategory = async (req, res) => {
         res.status(201).json(result.rows[0]);
     } catch (err) {
         console.error('Error creating category:', err.message);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// Get all categories created by a specific user
+exports.getCategoriesByUserId = async (req, res) => {
+    const userId = req.user?.id; // Get user ID from the authenticated user
+
+    if (!userId) {
+        return res.status(400).json({ message: 'User ID is required.' });
+    }
+    try {
+        const result = await pool.query(
+            `SELECT * FROM categories WHERE created_by = $1 AND status = 'active' ORDER BY display_order ASC, id ASC`,
+            [userId]
+        );
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Error fetching categories by user ID:', err.message);
         res.status(500).json({ message: 'Server error' });
     }
 };
@@ -134,6 +153,28 @@ exports.softDeleteCategory = async (req, res) => {
         res.json({ message: 'Category deleted successfully.' });
     } catch (err) {
         console.error('Error deleting category:', err.message);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// Get all categories for a specific user (super_admin access)
+exports.getAdminCategoriesForUser = async (req, res) => {
+    const { userId } = req.params; // Get target user ID from route parameters
+
+    if (!userId) {
+        // This check might be redundant if the route enforces userId param,
+        // but good for robustness.
+        return res.status(400).json({ message: 'Target User ID is required in the path.' });
+    }
+
+    try {
+        const result = await pool.query(
+            `SELECT * FROM categories WHERE created_by = $1 AND status = 'active' ORDER BY display_order ASC, id ASC`,
+            [userId]
+        );
+        res.json(result.rows); // Returns an empty array if no categories found for the user
+    } catch (err) {
+        console.error('Error fetching categories for user by admin:', err.message);
         res.status(500).json({ message: 'Server error' });
     }
 };

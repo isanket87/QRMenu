@@ -1,4 +1,5 @@
 const pool = require('../config/db');
+const bcrypt = require('bcryptjs');
 
 // Add a new user (admin/super_admin only)
 exports.addUser = async (req, res) => {
@@ -7,11 +8,12 @@ exports.addUser = async (req, res) => {
         city, state, country, role = 'user', isActive = true
     } = req.body;
     try {
+        const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
         const result = await pool.query(
             `INSERT INTO users 
-            (fullName, businessName, phoneNumber, email, password, city, state, country, role, "isActive") 
+            (full_name, business_name, phone_number, email, password, city, state, country, role, status) 
             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
-            [fullName, businessName, phoneNumber, email, password, city, state, country, role, isActive]
+            [fullName, businessName, phoneNumber, email, hashedPassword, city, state, country, role, isActive ? 'active' : 'inactive']
         );
         res.status(201).json(result.rows[0]);
     } catch (err) {
@@ -27,12 +29,23 @@ exports.updateUser = async (req, res) => {
         city, state, country, role, isActive
     } = req.body;
     try {
+        let hashedPassword;
+        if (password) { // Only hash password if it's being updated
+            hashedPassword = await bcrypt.hash(password, 10);
+        }
+
+        // Build the query and parameters dynamically to only update password if provided
+        const fields = { full_name: fullName, business_name: businessName, phone_number: phoneNumber, email, city, state, country, role, status: isActive ? 'active' : 'inactive' };
+        if (hashedPassword) {
+            fields.password = hashedPassword;
+        }
+
+        const setClauses = Object.keys(fields).map((key, index) => `${key}=$${index + 1}`).join(', ');
+        const values = Object.values(fields);
+
         const result = await pool.query(
-            `UPDATE users SET 
-                fullName=$1, businessName=$2, phoneNumber=$3, email=$4, password=$5, 
-                city=$6, state=$7, country=$8, role=$9, "isActive"=$10
-             WHERE id=$11 RETURNING *`,
-            [fullName, businessName, phoneNumber, email, password, city, state, country, role, isActive, id]
+            `UPDATE users SET ${setClauses} WHERE id=$${values.length + 1} RETURNING *`,
+            [...values, id]
         );
         if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
         res.json(result.rows[0]);
@@ -82,7 +95,7 @@ exports.searchUsers = async (req, res) => {
     try {
         const result = await pool.query(
             `SELECT * FROM users WHERE 
-                fullName ILIKE $1 OR email ILIKE $1`,
+                full_name ILIKE $1 OR email ILIKE $1`,
             [`%${q}%`]
         );
         res.json(result.rows);

@@ -3,10 +3,8 @@ const router = express.Router();
 const restaurantController = require('../controllers/restaurantController');
 const authorizeRoles = require('../middleware/roleMiddleware');
 
-// Create
-//router.post('/', authorizeRoles('admin', 'super_admin'), restaurantController.createRestaurant);
-
-router.post('/', restaurantController.createRestaurant);
+// Create - accessible by admin or super_admin
+router.post('/', authorizeRoles('admin', 'super_admin'), restaurantController.createRestaurant);
 
 // Get all
 router.get('/', restaurantController.getAllRestaurants);

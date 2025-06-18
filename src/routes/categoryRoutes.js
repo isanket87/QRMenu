@@ -31,7 +31,7 @@ router.get(
 // Get all categories for a specific user by their ID (admin or super_admin access)
 router.get(
     '/by-user/:userId',
-    authorizeRoles('admin', 'super_admin'), // Or adjust roles as needed
+    authorizeRoles('admin','user', 'super_admin'), // Or adjust roles as needed
     categoryController.getAdminCategoriesForUser // Reuses the existing controller logic
 );
 

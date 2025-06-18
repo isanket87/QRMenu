@@ -200,7 +200,72 @@
 					"host": ["{{hostName}}"],
 					"path": ["api", "categories"]
 				},
-				"description": "Create a new category (admin/super_admin only)."
+				"description": "Create a new category (accessible by admin, user, or super_admin)."
+			},
+			"response": []
+		},
+		{
+			"name": "Get My Categories",
+			"request": {
+				"method": "GET",
+				"header": [
+					{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+				],
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}/api/categories/my-categories",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"path": ["api", "categories", "my-categories"]
+				},
+				"description": "Get all categories created by the logged-in user."
+			},
+			"response": []
+		},
+		{
+			"name": "Admin: Get Categories for User",
+			"request": {
+				"method": "GET",
+				"header": [
+					{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+				],
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}/api/categories/admin/user/USER_ID_HERE",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"path": ["api", "categories", "admin", "user", "USER_ID_HERE"],
+					"variable": [
+						{
+							"key": "USER_ID_HERE",
+							"value": "1",
+							"description": "Replace with the actual User ID"
+						}
+					]
+				},
+				"description": "Get all categories for a specific user (super_admin access only). Replace USER_ID_HERE in the URL with the target user's ID."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Categories by User ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+				],
+				"url": {
+					"raw": "{{protocol}}://{{hostName}}/api/categories/by-user/USER_ID_HERE",
+					"protocol": "{{protocol}}",
+					"host": ["{{hostName}}"],
+					"path": ["api", "categories", "by-user", "USER_ID_HERE"],
+					"variable": [
+						{
+							"key": "USER_ID_HERE",
+							"value": "1",
+							"description": "Replace with the actual User ID"
+						}
+					]
+				},
+				"description": "Get all categories for a specific user by their ID (admin or super_admin access). Replace USER_ID_HERE in the URL with the target user's ID."
 			},
 			"response": []
 		},
@@ -286,7 +351,7 @@
 					"host": ["{{hostName}}"],
 					"path": ["api", "categories", "1"]
 				},
-				"description": "Update category (admin/super_admin only)."
+				"description": "Update category (admin or super_admin only)."
 			},
 			"response": []
 		},
@@ -303,7 +368,7 @@
 					"host": ["{{hostName}}"],
 					"path": ["api", "categories", "1"]
 				},
-				"description": "Soft delete category (admin/super_admin only)."
+				"description": "Soft delete category (admin or super_admin only)."
 			},
 			"response": []
 		},
@@ -538,10 +603,10 @@
 							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
 						],
 						"url": {
-							"raw": "{{protocol}}://{{hostName}}/api/users?page=1&limit=10",
+							"raw": "{{protocol}}://{{hostName}}/api/user?page=1&limit=10",
 							"protocol": "{{protocol}}",
 							"host": ["{{hostName}}"],
-							"path": ["api", "users"],
+							"path": ["api", "user"],
 							"query": [
 								{ "key": "page", "value": "1" },
 								{ "key": "limit", "value": "10" }
@@ -559,10 +624,10 @@
 							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
 						],
 						"url": {
-							"raw": "{{protocol}}://{{hostName}}/api/users/search?q=john",
+							"raw": "{{protocol}}://{{hostName}}/api/user/search?q=john",
 							"protocol": "{{protocol}}",
 							"host": ["{{hostName}}"],
-							"path": ["api", "users", "search"],
+							"path": ["api", "user", "search"],
 							"query": [
 								{ "key": "q", "value": "john" }
 							]

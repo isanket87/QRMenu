@@ -421,6 +421,33 @@
 						"description": "Soft delete category (admin or super_admin only)."
 					},
 					"response": []
+				},
+				{
+					"name": "Bulk Update Category Display Order",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  { \"id\": 1, \"display_order\": 0 },\n  { \"id\": 2, \"display_order\": 1 },\n  { \"id\": 5, \"display_order\": 2 }\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories/bulk-update-order",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories", "bulk-update-order"]
+						},
+						"description": "Updates the display order for multiple categories in bulk (admin or super_admin only).\n\n**Body:**\nAn array of category update objects. Each object must contain `id` (the category ID) and `display_order` (the new display order).\n\n**Response (Success Example):**\n```json\n{\n  \"message\": \"Bulk display order update processed. 3 operations successful out of 3 requested.\",\n  \"successfulOperations\": 3,\n  \"requestedOperations\": 3,\n  \"updatedCategories\": [\n    {\n      \"id\": 1,\n      \"restaurant_id\": 1,\n      \"name\": \"Starters\",\n      \"description\": \"Begin your meal\",\n      \"display_order\": 0,\n      \"status\": \"active\",\n      \"created_at\": \"2023-10-26T10:00:00.000Z\",\n      \"updated_at\": \"2023-10-27T12:30:00.000Z\",\n      \"created_by\": 10,\n      \"updated_by\": 12\n    }\n    // ... other updated categories\n  ]\n}\n```\n\n**Note:** If some categories specified in the request are not found or not active, `successfulOperations` will be less than `requestedOperations`. The `updatedCategories` array will only contain details for the categories that were actually updated."
+					},
+					"response": []
 				}
 			]
 		},

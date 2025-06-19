@@ -20,6 +20,76 @@ exports.createCategory = async (req, res) => {
     }
 };
 
+// Bulk update display order for categories
+exports.bulkUpdateCategoryDisplayOrder = async (req, res) => {
+    const categoryUpdates = req.body; // Expecting an array: [{ id: 1, display_order: 0 }, ...]
+    const updated_by = req.user?.id;
+
+    if (!updated_by) {
+        // This should ideally be caught by the 'protect' middleware,
+        // but it's a good safeguard.
+        return res.status(401).json({ message: 'Unauthorized: User not identified.' });
+    }
+
+    if (!Array.isArray(categoryUpdates) || categoryUpdates.length === 0) {
+        return res.status(400).json({ message: 'Request body must be a non-empty array of category updates.' });
+    }
+
+    const validationErrors = [];
+    for (let i = 0; i < categoryUpdates.length; i++) {
+        const update = categoryUpdates[i];
+        if (typeof update.id !== 'number' || update.id <= 0) {
+            validationErrors.push(`Item at index ${i}: 'id' must be a positive number.`);
+        }
+        if (typeof update.display_order !== 'number' || update.display_order < 0) {
+            validationErrors.push(`Item at index ${i}: 'display_order' must be a non-negative number.`);
+        }
+    }
+
+    if (validationErrors.length > 0) {
+        return res.status(400).json({ message: 'Invalid category update data.', errors: validationErrors });
+    }
+
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+
+        const resultsOfSuccessfulUpdates = [];
+        let successfullyUpdatedCount = 0;
+
+        for (const update of categoryUpdates) {
+            const result = await client.query(
+                `UPDATE categories
+                 SET display_order = $1, updated_by = $2, updated_at = NOW()
+                 WHERE id = $3 AND status = 'active'
+                 RETURNING *`, // Returns all fields of the updated row
+                [update.display_order, updated_by, update.id]
+            );
+
+            if (result.rowCount > 0) {
+                successfullyUpdatedCount++;
+                resultsOfSuccessfulUpdates.push(result.rows[0]);
+            }
+        }
+
+        await client.query('COMMIT');
+
+        res.status(200).json({
+            message: `Bulk display order update processed. ${successfullyUpdatedCount} operations successful out of ${categoryUpdates.length} requested.`,
+            successfulOperations: successfullyUpdatedCount,
+            requestedOperations: categoryUpdates.length,
+            updatedCategories: resultsOfSuccessfulUpdates
+        });
+
+    } catch (err) {
+        await client.query('ROLLBACK');
+        console.error('Error bulk updating category display order:', err.message, err.stack);
+        res.status(500).json({ message: 'Server error during bulk update.' });
+    } finally {
+        client.release();
+    }
+};
+
 // Get all categories created by a specific user
 exports.getCategoriesByUserId = async (req, res) => {
     const userId = req.user?.id; // Get user ID from the authenticated user

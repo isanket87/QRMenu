@@ -158,6 +158,49 @@ Retrieves all categories created by the currently logged-in user.
 
 ---
 
+### Bulk Update Category Display Order
+**PUT** `/api/categories/bulk-update-order`  
+**Headers:** `Authorization: Bearer <token>` (admin/super_admin only)
+
+**Body:**
+An array of category update objects. Each object must contain `id` (the category ID) and `display_order` (the new display order).
+```json
+[
+  { "id": 1, "display_order": 0 },
+  { "id": 2, "display_order": 1 },
+  { "id": 5, "display_order": 2 }
+]
+```
+
+**Response (Success Example):**
+If all requested updates are successful.
+```json
+{
+  "message": "Bulk display order update processed. 3 operations successful out of 3 requested.",
+  "successfulOperations": 3,
+  "requestedOperations": 3,
+  "updatedCategories": [
+    {
+      "id": 1,
+      "restaurant_id": 1,
+      "name": "Starters",
+      "description": "Begin your meal",
+      "display_order": 0,
+      "status": "active",
+      "created_at": "2023-10-26T10:00:00.000Z",
+      "updated_at": "2023-10-27T12:30:00.000Z",
+      "created_by": 10,
+      "updated_by": 12
+    }
+    // ... other updated categories
+  ]
+}
+```
+
+**Note:** If some categories specified in the request are not found or not active, `successfulOperations` will be less than `requestedOperations`. The `updatedCategories` array will only contain details for the categories that were actually updated.
+
+---
+
 ## Dishes (Menu Items)
 
 ### Create Dish

@@ -38,4 +38,11 @@ router.put('/:id', authorizeRoles('admin', 'super_admin'), categoryController.up
 // Soft delete
 router.delete('/:id', authorizeRoles('admin', 'super_admin'), categoryController.softDeleteCategory);
 
+// Bulk update display order
+router.put(
+    '/bulk-update-order',
+    authorizeRoles('admin', 'super_admin'),
+    categoryController.bulkUpdateCategoryDisplayOrder
+);
+
 module.exports = router;

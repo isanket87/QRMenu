@@ -6,12 +6,6 @@ const authorizeRoles = require('../middleware/roleMiddleware');
 // Create - accessible by user or super_admin
 router.post('/', authorizeRoles('admin','user', 'super_admin'), categoryController.createCategory);
 
-// Get all for a restaurant
-router.get('/restaurant/:restaurant_id', categoryController.getCategoriesByRestaurant);
-
-// Get by id
-router.get('/:id', categoryController.getCategoryById);
-
 // Get by name (query: ?restaurant_id=1&name=Starters)
 router.get('/by-name', categoryController.getCategoryByName);
 
@@ -20,6 +14,9 @@ router.get('/search', categoryController.searchCategories);
 
 // Get all categories by the logged-in user
 router.get('/my-categories', categoryController.getCategoriesByUserId);
+
+// Get by id - This should come after more specific string routes
+router.get('/:id', categoryController.getCategoryById);
 
 // Get all categories for a specific user (super_admin access only)
 router.get(

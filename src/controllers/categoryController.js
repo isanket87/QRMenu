@@ -24,18 +24,21 @@ exports.createCategory = async (req, res) => {
 exports.getCategoriesByUserId = async (req, res) => {
     const userId = req.user?.id; // Get user ID from the authenticated user
 
+    // This check is mostly a safeguard. The `protect` middleware applied
+    // at the router level in server.js should ensure req.user and req.user.id exist.
+    // If not, `protect` would typically send a 401 before reaching here.
     if (!userId) {
-        return res.status(400).json({ message: 'User ID is required.' });
+        return res.status(401).json({ message: 'Unauthorized: User not identified.' });
     }
     try {
         const result = await pool.query(
             `SELECT * FROM categories WHERE created_by = $1 AND status = 'active' ORDER BY display_order ASC, id ASC`,
             [userId]
         );
-        res.json(result.rows);
+        res.json(result.rows); // Uses the responseFormatter middleware
     } catch (err) {
-        console.error('Error fetching categories by user ID:', err.message);
-        res.status(500).json({ message: 'Server error' });
+        console.error('Error fetching categories by user ID:', err.message, err.stack);
+        res.status(500).json({ message: 'Server error while fetching user categories.' });
     }
 };
 

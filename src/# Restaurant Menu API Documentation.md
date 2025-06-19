@@ -117,6 +117,13 @@ Logs in a user and returns a JWT token.
 
 ---
 
+### Get My Categories
+**GET** `/api/categories/my-categories`  
+**Headers:** `Authorization: Bearer <token>`  
+Retrieves all categories created by the currently logged-in user.
+
+---
+
 ### Get All Categories for a Restaurant
 **GET** `/api/categories/restaurant/:restaurant_id`
 

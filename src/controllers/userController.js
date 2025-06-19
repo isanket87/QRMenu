@@ -81,52 +81,71 @@ exports.deleteUser = async (req, res) => {
 
 // Get all users with pagination
 exports.getAllUsers = async (req, res) => {
+    const loggedInUserRole = req.user?.role;
+
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 10;
     const offset = (page - 1) * limit;
     const searchQuery = req.query.q || '';
 
-    let baseQuery = `FROM users WHERE role != 'super_admin'`;
-    let usersQuery = `SELECT ${userFieldsToReturn} ${baseQuery}`;
-    let countQuery = `SELECT COUNT(*) ${baseQuery}`;
-    const queryParams = [];
+    const conditions = [];
+    const queryParams = []; // Parameters for the WHERE clause
     let paramIndex = 1;
 
-    if (searchQuery) {
-        const searchCondition = `(full_name ILIKE $${paramIndex} OR email ILIKE $${paramIndex})`;
-        usersQuery += ` AND ${searchCondition}`;
-        countQuery += ` AND ${searchCondition}`;
-        queryParams.push(`%${searchQuery}%`);
-        paramIndex++;
+    // Role-based filtering
+    if (loggedInUserRole === 'admin') {
+        // Admins see other 'admin' and 'user' roles.
+        conditions.push(`role IN ($${paramIndex++}, $${paramIndex++})`);
+        queryParams.push('admin', 'user');
+    } else if (loggedInUserRole === 'super_admin') {
+        // Super admins see all users. No specific role filter added here.
+    } else {
+        // This case should ideally be prevented by route-level authorization.
+        // If a role without explicit permission reaches here, return empty.
+        return res.json({
+            users: [],
+            pagination: { total: 0, page, pages: 0 }
+        });
     }
 
-    usersQuery += ` ORDER BY id LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
-    queryParams.push(limit, offset);
+    // Search query filtering
+    if (searchQuery) {
+        // The same parameter $${paramIndex} is used for both full_name and email ILIKE
+        conditions.push(`(full_name ILIKE $${paramIndex} OR email ILIKE $${paramIndex})`);
+        queryParams.push(`%${searchQuery}%`);
+        paramIndex++; // Increment after adding the parameter to queryParams
+    }
+
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+    const usersQueryString = `SELECT ${userFieldsToReturn} FROM users ${whereClause} ORDER BY id LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
+    const usersQueryParams = [...queryParams, limit, offset]; // Add limit and offset for the main query
+
+    const countQueryString = `SELECT COUNT(*) FROM users ${whereClause}`;
+    // countQueryParams are the same as queryParams for the WHERE clause (no limit/offset)
+    const countQueryParams = [...queryParams];
 
     try {
-        const usersResult = await pool.query(usersQuery, queryParams);
-        
-        // Adjust countQueryParams for the count query
-        // Rebuild countQueryParams based on whether searchQuery exists, ensuring 'super_admin' is always excluded.
-        const countQueryParams = [];
-        let countBaseQuery = `SELECT COUNT(*) FROM users WHERE role != 'super_admin'`;
-        if (searchQuery) {
-            countBaseQuery += ` AND (full_name ILIKE $1 OR email ILIKE $1)`;
-            countQueryParams.push(`%${searchQuery}%`);
-        }
-        const countResult = await pool.query(countQuery, countQueryParams);
+        const usersResult = await pool.query(usersQueryString, usersQueryParams);
+        const countResult = await pool.query(countQueryString, countQueryParams);
 
         const total = parseInt(countResult.rows[0].count, 10);
+        let numPages = 0;
+        if (total > 0) {
+            numPages = (limit > 0) ? Math.ceil(total / limit) : 1;
+        }
+
         res.json({
             users: usersResult.rows,
-            pagination :{
+            pagination: {
                 total,
                 page,
-                pages: limit > 0 ? Math.ceil(total / limit) : 1
+                pages: numPages
             }
         });
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        console.error('Error in getAllUsers:', err.message, err.stack);
+        res.status(500).json({ error: 'Failed to retrieve users.' });
     }
 };
 

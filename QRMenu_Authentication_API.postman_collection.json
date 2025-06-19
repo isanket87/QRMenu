@@ -7,7 +7,7 @@
 	},
 	"item": [
 		{
-			"name": "User Registration",
+			"name": "Authentication",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -40,10 +40,84 @@
 				},
 				"description": "Registers a new user in the system."
 			},
-			"response": []
+			"response": [],
+			"item": [
+				{
+					"name": "User Registration",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fullName\": \"Jane Doe\",\n    \"businessName\": \"Jane's Innovations\",\n    \"phoneNumber\": \"098-765-4321\",\n    \"email\": \"jane.doe@example.com\",\n    \"password\": \"strongPassword456\",\n    \"city\": \"San Francisco\",\n    \"state\": \"CA\",\n    \"country\": \"USA\",\n    \"role\": \"user\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/auth/register",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{hostName}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Registers a new user in the system."
+					},
+					"response": []
+				},
+				{
+					"name": "User Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"jane.doe@example.com\",\n    \"password\": \"strongPassword456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/auth/login",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{hostName}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Logs in an existing user and returns a JWT."
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"name": "User Login",
+			"name": "Restaurants",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -76,10 +150,116 @@
 				},
 				"description": "Logs in an existing user and returns a JWT."
 			},
-			"response": []
+			"response": [],
+			"item": [
+				{
+					"name": "Create Restaurant",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Pizza Palace\",\n  \"address\": \"123 Main St\",\n  \"description\": \"Best pizza in town\",\n  \"opening_time\": \"09:00\",\n  \"closing_time\": \"23:00\",\n  \"type\": \"restaurant\",\n  \"food_type\": \"both\",\n  \"phone_number\": \"1234567890\",\n  \"email\": \"info@pizza.com\",\n  \"website\": \"https://pizza.com\",\n  \"image_url\": \"https://img.com/pizza.jpg\"\n}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/restaurants",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "restaurants"]
+						},
+						"description": "Create a new restaurant (admin/super_admin only)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Restaurants",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/restaurants",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "restaurants"]
+						},
+						"description": "Get all restaurants."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Restaurant by ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/restaurants/1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "restaurants", "1"]
+						},
+						"description": "Get restaurant by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Search Restaurants",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/restaurants/search?q=pizza",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "restaurants", "search"],
+							"query": [{ "key": "q", "value": "pizza" }]
+						},
+						"description": "Search restaurants by name or address."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Restaurant",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Pizza Palace\"\n}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/restaurants/1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "restaurants", "1"]
+						},
+						"description": "Update restaurant (admin/super_admin only)."
+					},
+					"response": []
+				},
+				{
+					"name": "Soft Delete Restaurant",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/restaurants/1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "restaurants", "1"]
+						},
+						"description": "Soft delete restaurant (admin/super_admin only)."
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"name": "Create Restaurant",
+			"name": "Categories",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -98,10 +278,154 @@
 				},
 				"description": "Create a new restaurant (admin/super_admin only)."
 			},
-			"response": []
+			"response": [],
+			"item": [
+				{
+					"name": "Create Category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"restaurant_id\": 1,\n  \"name\": \"Starters\",\n  \"description\": \"Begin your meal\",\n  \"display_order\": 1\n}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories"]
+						},
+						"description": "Create a new category (accessible by admin, user, or super_admin)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Categories",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories/my-categories",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories", "my-categories"]
+						},
+						"description": "Get all categories created by the logged-in user."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Categories for a Restaurant",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories/restaurant/1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories", "restaurant", "1"]
+						},
+						"description": "Get all categories for a restaurant."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category by ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories/1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories", "1"]
+						},
+						"description": "Get category by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category by Name",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories/by-name?restaurant_id=1&name=Starters",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories", "by-name"],
+							"query": [
+								{ "key": "restaurant_id", "value": "1" },
+								{ "key": "name", "value": "Starters" }
+							]
+						},
+						"description": "Get category by name for a restaurant."
+					},
+					"response": []
+				},
+				{
+					"name": "Search Categories",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories/search?restaurant_id=1&q=star",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories", "search"],
+							"query": [
+								{ "key": "restaurant_id", "value": "1" },
+								{ "key": "q", "value": "star" }
+							]
+						},
+						"description": "Search categories by name for a restaurant."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Category",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Starters\"\n}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories/1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories", "1"]
+						},
+						"description": "Update category (admin or super_admin only)."
+					},
+					"response": []
+				},
+				{
+					"name": "Soft Delete Category",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories/1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories", "1"]
+						},
+						"description": "Soft delete category (admin or super_admin only)."
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"name": "Get All Restaurants",
+			"name": "Dishes",
 			"request": {
 				"method": "GET",
 				"url": {
@@ -112,10 +436,171 @@
 				},
 				"description": "Get all restaurants."
 			},
-			"response": []
+			"response": [],
+			"item": [
+				{
+					"name": "Create Dish",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"restaurant_id\": 1,\n  \"category_id\": 2,\n  \"name\": \"French Fries\",\n  \"description\": \"Crispy fries\",\n  \"price\": 99.99,\n  \"image_url\": \"https://img.com/fries.jpg\",\n  \"is_available\": true\n}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/dishes",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "dishes"]
+						},
+						"description": "Create a new dish (admin/super_admin only)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Dishes for a Restaurant",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/dishes?restaurant_id=1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "dishes"],
+							"query": [{ "key": "restaurant_id", "value": "1" }]
+						},
+						"description": "Get all dishes for a restaurant."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Dishes for a Category",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/dishes?restaurant_id=1&category_id=2",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "dishes"],
+							"query": [
+								{ "key": "restaurant_id", "value": "1" },
+								{ "key": "category_id", "value": "2" }
+							]
+						},
+						"description": "Get all dishes for a category."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Independent Dishes (No Category)",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/dishes/independent?restaurant_id=1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "dishes", "independent"],
+							"query": [{ "key": "restaurant_id", "value": "1" }]
+						},
+						"description": "Get all independent dishes (no category) for a restaurant."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Dish by ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/dishes/1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "dishes", "1"]
+						},
+						"description": "Get dish by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Dish by Name",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/dishes/by-name?restaurant_id=1&name=French Fries",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "dishes", "by-name"],
+							"query": [
+								{ "key": "restaurant_id", "value": "1" },
+								{ "key": "name", "value": "French Fries" }
+							]
+						},
+						"description": "Get dish by name for a restaurant."
+					},
+					"response": []
+				},
+				{
+					"name": "Search Dishes",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/dishes/search?restaurant_id=1&q=fries",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "dishes", "search"],
+							"query": [
+								{ "key": "restaurant_id", "value": "1" },
+								{ "key": "q", "value": "fries" }
+							]
+						},
+						"description": "Search dishes by name for a restaurant."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Dish",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated French Fries\"\n}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/dishes/1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "dishes", "1"]
+						},
+						"description": "Update dish (admin/super_admin only)."
+					},
+					"response": []
+				},
+				{
+					"name": "Soft Delete Dish",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/dishes/1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "dishes", "1"]
+						},
+						"description": "Soft delete dish (admin/super_admin only)."
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"name": "Get Restaurant by ID",
+			"name": "User Management",
 			"request": {
 				"method": "GET",
 				"url": {
@@ -126,10 +611,167 @@
 				},
 				"description": "Get restaurant by ID."
 			},
-			"response": []
-		},
+			"response": [],
+			"item": [
+				{
+					"name": "Add User (Admin Only)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fullName\": \"John Smith\",\n    \"businessName\": \"Smith's Cafe\",\n    \"phoneNumber\": \"123-456-7890\",\n    \"email\": \"john.smith@example.com\",\n    \"password\": \"securePassword123\",\n    \"city\": \"New York\",\n    \"state\": \"NY\",\n    \"country\": \"USA\",\n    \"role\": \"user\",\n    \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/user",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "user"]
+						},
+						"description": "Add a new user (admin/super_admin only)."
+					},
+					"response": []
+				},
+				{
+					"name": "Update User (Admin Only)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fullName\": \"Updated Name\",\n    \"businessName\": \"Updated Business\",\n    \"phoneNumber\": \"987-654-3210\",\n    \"email\": \"updated.email@example.com\",\n    \"password\": \"newPassword456\",\n    \"city\": \"Los Angeles\",\n    \"state\": \"CA\",\n    \"country\": \"USA\",\n    \"role\": \"admin\",\n    \"isActive\": false\n}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/user/1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "user", "1"]
+						},
+						"description": "Update a user by ID (admin/super_admin only)."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User (Admin Only)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/user/1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "user", "1"]
+						},
+						"description": "Delete a user by ID (admin/super_admin only)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users (Admin Only, Paginated)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/user?page=1&limit=10&q=john",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "user"],
+							"query": [
+								{ "key": "page", "value": "1" },
+								{ "key": "limit", "value": "10" },
+								{ "key": "q", "value": "john", "description": "Optional: search term for full name or email", "disabled": true }
+							]
+						},
+						"description": "Get all users with pagination (admin/super_admin only)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by ID (Admin Only)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/user/1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "user", "1"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "Replace with the actual User ID"
+								}
+							]
+						},
+						"description": "Get a specific user by their ID (admin/super_admin only). Replace the '1' in the URL path with the actual user ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Admin: Get Categories for User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories/admin/user/USER_ID_HERE",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories", "admin", "user", "USER_ID_HERE"],
+							"variable": [
+								{
+									"key": "USER_ID_HERE",
+									"value": "1",
+									"description": "Replace with the actual User ID"
+								}
+							]
+						},
+						"description": "Get all categories for a specific user (super_admin access only). Replace USER_ID_HERE in the URL with the target user's ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Categories by User ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories/by-user/USER_ID_HERE",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories", "by-user", "USER_ID_HERE"],
+							"variable": [
+								{
+									"key": "USER_ID_HERE",
+									"value": "1",
+									"description": "Replace with the actual User ID"
+								}
+							]
+						}, 
+						"description": "Get all categories for a specific user by their ID (admin or super_admin access). Replace USER_ID_HERE in the URL with the target user's ID."
+					}, 
+					"response": [] 
+				} 
+			] 
+		}, 
 		{
-			"name": "Search Restaurants",
+			"name": "Categories",
 			"request": {
 				"method": "GET",
 				"url": {
@@ -141,10 +783,202 @@
 				},
 				"description": "Search restaurants by name or address."
 			},
-			"response": []
+			"response": [],
+			"item": [
+				{
+					"name": "Create Category",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"restaurant_id\": 1,\n  \"name\": \"Starters\",\n  \"description\": \"Begin your meal\",\n  \"display_order\": 1\n}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories"]
+						},
+						"description": "Create a new category (accessible by admin, user, or super_admin)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Categories",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories/my-categories",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories", "my-categories"]
+						},
+						"description": "Get all categories created by the logged-in user."
+					},
+					"response": []
+				},
+				{
+					"name": "Admin: Get Categories for User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories/admin/user/USER_ID_HERE",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories", "admin", "user", "USER_ID_HERE"],
+							"variable": [
+								{
+									"key": "USER_ID_HERE",
+									"value": "1",
+									"description": "Replace with the actual User ID"
+								}
+							]
+						},
+						"description": "Get all categories for a specific user (super_admin access only). Replace USER_ID_HERE in the URL with the target user's ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Categories by User ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories/by-user/USER_ID_HERE",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories", "by-user", "USER_ID_HERE"],
+							"variable": [
+								{
+									"key": "USER_ID_HERE",
+									"value": "1",
+									"description": "Replace with the actual User ID"
+								}
+							]
+						},
+						"description": "Get all categories for a specific user by their ID (admin or super_admin access). Replace USER_ID_HERE in the URL with the target user's ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Categories for a Restaurant",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories/restaurant/1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories", "restaurant", "1"]
+						},
+						"description": "Get all categories for a restaurant."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category by ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories/1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories", "1"]
+						},
+						"description": "Get category by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category by Name",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories/by-name?restaurant_id=1&name=Starters",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories", "by-name"],
+							"query": [
+								{ "key": "restaurant_id", "value": "1" },
+								{ "key": "name", "value": "Starters" }
+							]
+						},
+						"description": "Get category by name for a restaurant."
+					},
+					"response": []
+				},
+				{
+					"name": "Search Categories",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories/search?restaurant_id=1&q=star",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories", "search"],
+							"query": [
+								{ "key": "restaurant_id", "value": "1" },
+								{ "key": "q", "value": "star" }
+							]
+						},
+						"description": "Search categories by name for a restaurant."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Category",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Starters\"\n}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories/1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories", "1"]
+						},
+						"description": "Update category (admin or super_admin only)."
+					},
+					"response": []
+				},
+				{
+					"name": "Soft Delete Category",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories/1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories", "1"]
+						},
+						"description": "Soft delete category (admin or super_admin only)."
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"name": "Update Restaurant",
+			"name": "Dishes",
 			"request": {
 				"method": "PUT",
 				"header": [
@@ -163,10 +997,171 @@
 				},
 				"description": "Update restaurant (admin/super_admin only)."
 			},
-			"response": []
+			"response": [],
+			"item": [
+				{
+					"name": "Create Dish",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"restaurant_id\": 1,\n  \"category_id\": 2,\n  \"name\": \"French Fries\",\n  \"description\": \"Crispy fries\",\n  \"price\": 99.99,\n  \"image_url\": \"https://img.com/fries.jpg\",\n  \"is_available\": true\n}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/dishes",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "dishes"]
+						},
+						"description": "Create a new dish (admin/super_admin only)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Dishes for a Restaurant",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/dishes?restaurant_id=1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "dishes"],
+							"query": [{ "key": "restaurant_id", "value": "1" }]
+						},
+						"description": "Get all dishes for a restaurant."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Dishes for a Category",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/dishes?restaurant_id=1&category_id=2",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "dishes"],
+							"query": [
+								{ "key": "restaurant_id", "value": "1" },
+								{ "key": "category_id", "value": "2" }
+							]
+						},
+						"description": "Get all dishes for a category."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Independent Dishes (No Category)",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/dishes/independent?restaurant_id=1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "dishes", "independent"],
+							"query": [{ "key": "restaurant_id", "value": "1" }]
+						},
+						"description": "Get all independent dishes (no category) for a restaurant."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Dish by ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/dishes/1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "dishes", "1"]
+						},
+						"description": "Get dish by ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Dish by Name",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/dishes/by-name?restaurant_id=1&name=French Fries",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "dishes", "by-name"],
+							"query": [
+								{ "key": "restaurant_id", "value": "1" },
+								{ "key": "name", "value": "French Fries" }
+							]
+						},
+						"description": "Get dish by name for a restaurant."
+					},
+					"response": []
+				},
+				{
+					"name": "Search Dishes",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/dishes/search?restaurant_id=1&q=fries",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "dishes", "search"],
+							"query": [
+								{ "key": "restaurant_id", "value": "1" },
+								{ "key": "q", "value": "fries" }
+							]
+						},
+						"description": "Search dishes by name for a restaurant."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Dish",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json", "type": "text" },
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated French Fries\"\n}"
+						},
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/dishes/1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "dishes", "1"]
+						},
+						"description": "Update dish (admin/super_admin only)."
+					},
+					"response": []
+				},
+				{
+					"name": "Soft Delete Dish",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/dishes/1",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "dishes", "1"]
+						},
+						"description": "Soft delete dish (admin/super_admin only)."
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"name": "Soft Delete Restaurant",
+			"name": "User Management",
 			"request": {
 				"method": "DELETE",
 				"header": [

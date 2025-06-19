@@ -110,9 +110,11 @@ exports.getAllUsers = async (req, res) => {
         const total = parseInt(countResult.rows[0].count, 10);
         res.json({
             users: usersResult.rows,
-            total,
-            page,
-            pages: limit > 0 ? Math.ceil(total / limit) : 1
+            pagination :{
+                total,
+                page,
+                pages: limit > 0 ? Math.ceil(total / limit) : 1
+            }
         });
     } catch (err) {
         res.status(400).json({ error: err.message });

@@ -86,25 +86,34 @@ exports.getAllUsers = async (req, res) => {
     const offset = (page - 1) * limit;
     const searchQuery = req.query.q || '';
 
-    let usersQuery = `SELECT ${userFieldsToReturn} FROM users`;
-    let countQuery = `SELECT COUNT(*) FROM users`;
+    let baseQuery = `FROM users WHERE role != 'super_admin'`;
+    let usersQuery = `SELECT ${userFieldsToReturn} ${baseQuery}`;
+    let countQuery = `SELECT COUNT(*) ${baseQuery}`;
     const queryParams = [];
+    let paramIndex = 1;
 
     if (searchQuery) {
-        const searchCondition = ` WHERE (full_name ILIKE $1 OR email ILIKE $1)`;
-        usersQuery += searchCondition;
-        countQuery += searchCondition;
+        const searchCondition = `(full_name ILIKE $${paramIndex} OR email ILIKE $${paramIndex})`;
+        usersQuery += ` AND ${searchCondition}`;
+        countQuery += ` AND ${searchCondition}`;
         queryParams.push(`%${searchQuery}%`);
+        paramIndex++;
     }
 
-    usersQuery += ` ORDER BY id LIMIT $${queryParams.length + 1} OFFSET $${queryParams.length + 2}`;
+    usersQuery += ` ORDER BY id LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
     queryParams.push(limit, offset);
 
     try {
         const usersResult = await pool.query(usersQuery, queryParams);
         
         // Adjust countQueryParams for the count query
-        const countQueryParams = searchQuery ? [`%${searchQuery}%`] : [];
+        // Rebuild countQueryParams based on whether searchQuery exists, ensuring 'super_admin' is always excluded.
+        const countQueryParams = [];
+        let countBaseQuery = `SELECT COUNT(*) FROM users WHERE role != 'super_admin'`;
+        if (searchQuery) {
+            countBaseQuery += ` AND (full_name ILIKE $1 OR email ILIKE $1)`;
+            countQueryParams.push(`%${searchQuery}%`);
+        }
         const countResult = await pool.query(countQuery, countQueryParams);
 
         const total = parseInt(countResult.rows[0].count, 10);

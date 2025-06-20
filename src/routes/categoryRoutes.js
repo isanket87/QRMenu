@@ -33,7 +33,7 @@ router.get(
 );
 
 // Update
-router.put('/:id', authorizeRoles('admin', 'super_admin'), categoryController.updateCategory);
+router.put('/:id', categoryController.updateCategory);
 
 // Soft delete
 router.delete('/:id', authorizeRoles('admin', 'super_admin'), categoryController.softDeleteCategory);
@@ -41,7 +41,6 @@ router.delete('/:id', authorizeRoles('admin', 'super_admin'), categoryController
 // Bulk update display order
 router.put(
     '/bulk-update-order',
-    authorizeRoles('admin', 'super_admin'),
     categoryController.bulkUpdateCategoryDisplayOrder
 );
 

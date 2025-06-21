@@ -36,7 +36,7 @@ const register = async (req, res) => {
         }
 
         const newUser = await userModel.createUser({
-            fullName, businessName, phoneNumber, email, password, city, state, country, role: role || 'user'
+            fullName, businessName, phoneNumber, email, password, city, state, country, role: (role || 'user').toUpperCase()
         });
 
         // Respond with a success message instead of token and user details
@@ -77,7 +77,7 @@ const login = async (req, res) => {
         }
 
         const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
-        res.json({ token, user: { id: user.id, fullName: user.full_name, email: user.email, role: user.role } });
+        res.json({ token, user: { id: user.id, fullName: user.full_name, email: user.email, role: user.role.toUpperCase() } });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ message: 'Server error during login.' });

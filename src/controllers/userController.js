@@ -11,12 +11,13 @@ exports.addUser = async (req, res) => {
         city, state, country, role = 'user', isActive = true
     } = req.body;
     try {
-        const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const userRole = role.toUpperCase(); // Convert role to uppercase
         const result = await pool.query(
             `INSERT INTO users 
             (full_name, business_name, phone_number, email, password, city, state, country, role, status)
             VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING ${userFieldsToReturn}`,
-            [fullName, businessName, phoneNumber, email, hashedPassword, city, state, country, role, isActive ? 'active' : 'inactive']
+            [fullName, businessName, phoneNumber, email, hashedPassword, city, state, country, userRole, isActive ? 'active' : 'inactive']
         );
         // The RETURNING clause already selected the safe fields
         if (result.rows.length > 0) {
@@ -43,7 +44,10 @@ exports.updateUser = async (req, res) => {
         }
 
         // Build the query and parameters dynamically to only update password if provided
-        const fields = { full_name: fullName, business_name: businessName, phone_number: phoneNumber, email, city, state, country, role, status: isActive ? 'active' : 'inactive' };
+        const fields = { full_name: fullName, business_name: businessName, phone_number: phoneNumber, email, city, state, country, status: isActive ? 'active' : 'inactive' };
+        if (role !== undefined) { // Only update role if provided in the request body
+            fields.role = role.toUpperCase();
+        }
         if (hashedPassword) {
             fields.password = hashedPassword;
         }

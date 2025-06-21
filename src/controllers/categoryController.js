@@ -206,6 +206,7 @@ exports.updateCategory = async (req, res) => {
         }
         res.json(result.rows[0]);
     } catch (err) {
+        console.error('Error updating:', err.message, err.stack);
         console.error('Error updating category:', err.message);
         res.status(500).json({ message: 'Server error' });
     }

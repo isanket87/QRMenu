@@ -32,16 +32,18 @@ router.get(
     categoryController.getAdminCategoriesForUser // Reuses the existing controller logic
 );
 
+// Bulk update display order
+router.put(
+    '/bulk-update-order',
+    categoryController.bulkUpdateCategoryDisplayOrder
+);
+
 // Update
 router.put('/:id', categoryController.updateCategory);
 
 // Soft delete
 router.delete('/:id', authorizeRoles('admin', 'super_admin'), categoryController.softDeleteCategory);
 
-// Bulk update display order
-router.put(
-    '/bulk-update-order',
-    categoryController.bulkUpdateCategoryDisplayOrder
-);
+
 
 module.exports = router;

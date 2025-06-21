@@ -75,10 +75,10 @@ exports.bulkUpdateCategoryDisplayOrder = async (req, res) => {
         await client.query('COMMIT');
 
         res.status(200).json({
-            message: `Bulk display order update processed. ${successfullyUpdatedCount} operations successful out of ${categoryUpdates.length} requested.`,
-            successfulOperations: successfullyUpdatedCount,
-            requestedOperations: categoryUpdates.length,
-            updatedCategories: resultsOfSuccessfulUpdates
+           // message: `Bulk display order update processed. ${successfullyUpdatedCount} operations successful out of ${categoryUpdates.length} requested.`,
+           // successfulOperations: successfullyUpdatedCount,
+           // requestedOperations: categoryUpdates.length,
+            data: resultsOfSuccessfulUpdates
         });
 
     } catch (err) {

@@ -4,7 +4,7 @@ const categoryController = require('../controllers/categoryController');
 const authorizeRoles = require('../middleware/roleMiddleware');
 
 // Create - accessible by user or super_admin
-router.post('/', authorizeRoles('admin','user', 'super_admin'), categoryController.createCategory);
+router.post('/', authorizeRoles('admin','user', 'superadmin'), categoryController.createCategory);
 
 // Get by name (query: ?restaurant_id=1&name=Starters)
 router.get('/by-name', categoryController.getCategoryByName);
@@ -28,7 +28,7 @@ router.get(
 // Get all categories for a specific user by their ID (admin or super_admin access)
 router.get(
     '/by-user/:userId',
-    authorizeRoles('admin','user', 'super_admin'), // Or adjust roles as needed
+    authorizeRoles('admin','user', 'superadmin'), // Or adjust roles as needed
     categoryController.getAdminCategoriesForUser // Reuses the existing controller logic
 );
 
@@ -42,7 +42,7 @@ router.put(
 router.put('/:id', categoryController.updateCategory);
 
 // Soft delete
-router.delete('/:id', authorizeRoles('admin', 'super_admin'), categoryController.softDeleteCategory);
+router.delete('/:id', authorizeRoles('admin', 'superadmin'), categoryController.softDeleteCategory);
 
 
 

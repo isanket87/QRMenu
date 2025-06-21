@@ -101,7 +101,7 @@ exports.getAllUsers = async (req, res) => {
         // Admins see other 'admin' and 'user' roles.
         conditions.push(`role IN ($${paramIndex++}, $${paramIndex++})`);
         queryParams.push('admin', 'user');
-    } else if (loggedInUserRole === 'super_admin') {
+    } else if (loggedInUserRole === 'superadmin') {
         // Super admins see all users. No specific role filter added here.
     } else {
         // This case should ideally be prevented by route-level authorization.

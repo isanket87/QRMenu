@@ -13,7 +13,7 @@ router.post('/login', authController.login);
 router.post(
     '/admin-only',
     protect,
-    authorizeRoles('admin', 'super_admin'),
+    authorizeRoles('admin', 'superadmin'),
     (req, res) => {
         res.json({ message: 'Admin and Super Admin content accessible' });
     }
@@ -23,7 +23,7 @@ router.post(
 router.post(
     '/restaurant',
     protect, // Add protect middleware
-    authorizeRoles('admin', 'super_admin'),
+    authorizeRoles('admin', 'superadmin'),
     restaurantController.createRestaurant
 );
 

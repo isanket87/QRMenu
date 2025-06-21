@@ -95,12 +95,31 @@ exports.getCategoriesByUserId = async (req, res) => {
     if (!userId) {
         return res.status(401).json({ message: 'Unauthorized: User not identified.' });
     }
+
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const offset = (page - 1) * limit;
+
     try {
-        const result = await pool.query(
-            `SELECT * FROM categories WHERE created_by = $1 AND status = 'active' ORDER BY display_order ASC, id ASC`,
-            [userId]
-        );
-        res.json(result.rows); // Uses the responseFormatter middleware
+        const categoriesQuery = `SELECT * FROM categories WHERE created_by = $1 AND status = 'active' ORDER BY display_order ASC, id ASC LIMIT $2 OFFSET $3`;
+        const countQuery = `SELECT COUNT(*) FROM categories WHERE created_by = $1 AND status = 'active'`;
+
+        const [categoriesResult, countResult] = await Promise.all([
+            pool.query(categoriesQuery, [userId, limit, offset]),
+            pool.query(countQuery, [userId])
+        ]);
+
+        const total = parseInt(countResult.rows[0].count, 10);
+        const pages = Math.ceil(total / limit);
+
+        res.json({
+            data: categoriesResult.rows,
+            pagination: {
+                total,
+                page,
+                pages
+            }
+        });
     } catch (err) {
         console.error('Error fetching categories by user ID:', err.message, err.stack);
         res.status(500).json({ message: 'Server error while fetching user categories.' });
@@ -229,6 +248,9 @@ exports.softDeleteCategory = async (req, res) => {
 // Get all categories for a specific user (super_admin access)
 exports.getAdminCategoriesForUser = async (req, res) => {
     const { userId } = req.params; // Get target user ID from route parameters
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const offset = (page - 1) * limit;
 
     if (!userId) {
         // This check might be redundant if the route enforces userId param,
@@ -237,11 +259,25 @@ exports.getAdminCategoriesForUser = async (req, res) => {
     }
 
     try {
-        const result = await pool.query(
-            `SELECT * FROM categories WHERE created_by = $1 AND status = 'active' ORDER BY display_order ASC, id ASC`,
-            [userId]
-        );
-        res.json(result.rows); // Returns an empty array if no categories found for the user
+        const categoriesQuery = `SELECT * FROM categories WHERE created_by = $1 AND status = 'active' ORDER BY display_order ASC, id ASC LIMIT $2 OFFSET $3`;
+        const countQuery = `SELECT COUNT(*) FROM categories WHERE created_by = $1 AND status = 'active'`;
+
+        const [categoriesResult, countResult] = await Promise.all([
+            pool.query(categoriesQuery, [userId, limit, offset]),
+            pool.query(countQuery, [userId])
+        ]);
+
+        const total = parseInt(countResult.rows[0].count, 10);
+        const pages = Math.ceil(total / limit);
+
+        res.json({
+            data: categoriesResult.rows,
+            pagination: {
+                total,
+                page,
+                pages
+            }
+        });
     } catch (err) {
         console.error('Error fetching categories for user by admin:', err.message);
         res.status(500).json({ message: 'Server error' });

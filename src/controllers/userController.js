@@ -140,7 +140,7 @@ exports.getAllUsers = async (req, res) => {
         }
 
         res.json({
-            users: usersResult.rows,
+            data: usersResult.rows,
             pagination: {
                 total,
                 page,

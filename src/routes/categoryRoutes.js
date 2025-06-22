@@ -42,7 +42,7 @@ router.put(
 router.put('/:id', categoryController.updateCategory);
 
 // Soft delete
-router.delete('/:id', authorizeRoles('admin', 'superadmin'), categoryController.softDeleteCategory);
+router.delete('/:id',  categoryController.softDeleteCategory);
 
 
 

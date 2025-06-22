@@ -16,3 +16,4 @@
 npm-debug.log
 #Ignore node_modules in subdirectories
 **/node_modules
+.env

@@ -2,7 +2,7 @@ const pool = require('../config/db');
 const bcrypt = require('bcryptjs');
 
 // Define a common list of user fields to return, excluding sensitive ones
-const userFieldsToReturn = 'id, full_name, business_name, phone_number, email, city, state, country, role, status, created_at, updated_at';
+const userFieldsToReturn = 'id, full_name, business_name, phone_number, email, city, state, country, role, status, created_at, updated_at, qr_code_url';
 
 // Add a new user (admin/super_admin only)
 exports.addUser = async (req, res) => {

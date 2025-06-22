@@ -1,10 +1,19 @@
 // e:\QRMenu\src\controllers\authController.js
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const userModel = require('../models/userModel');
+const userModel = require('../models/userModel'); // Ensure userModel is imported
+const QRCode = require('qrcode'); // Import qrcode library
+const cloudinary = require('cloudinary').v2; // Import cloudinary
 require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
+
+// Configure Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 const register = async (req, res) => {
     const { fullName, businessName, phoneNumber, email, password, city, state, country, role } = req.body;
@@ -38,6 +47,34 @@ const register = async (req, res) => {
         const newUser = await userModel.createUser({
             fullName, businessName, phoneNumber, email, password, city, state, country, role: (role || 'user').toUpperCase()
         });
+
+        // --- QR Code Generation and Cloudinary Upload ---
+        if (newUser && newUser.id) {
+            // Construct the URL that the QR code will point to.
+            // Assuming a public menu page for the user, e.g., /menu/:userId
+            const userMenuUrl = `${process.env.APP_BASE_URL}/menu/${newUser.id}`;
+            let qrCodeUrl = null;
+
+            try {
+                // Generate QR code as a data URL (base64 encoded image)
+                const qrCodeDataUrl = await QRCode.toDataURL(userMenuUrl);
+
+                // Upload to Cloudinary
+                const uploadResult = await cloudinary.uploader.upload(qrCodeDataUrl, {
+                    folder: `qrmenu/user_qrcodes`, // Optional: organize uploads in a specific folder
+                    public_id: `user_${newUser.id}_qr`, // Optional: unique public ID for easy retrieval
+                    overwrite: true // Overwrite if a QR code for this user already exists (e.g., on re-registration or update)
+                });
+
+                qrCodeUrl = uploadResult.secure_url;
+                console.log(`QR Code uploaded to Cloudinary for user ${newUser.id}: ${qrCodeUrl}`);
+                await userModel.updateUserQrCode(newUser.id, qrCodeUrl); // Store the URL in the database
+            } catch (qrError) {
+                console.error(`Error generating or uploading QR code for user ${newUser.id}:`, qrError.message);
+                // Log the error but don't prevent user registration from succeeding
+            }
+        }
+        // --- End QR Code Logic ---
 
         // Respond with a success message instead of token and user details
         res.status(201).json({ message: 'User registered successfully. Please login.' });

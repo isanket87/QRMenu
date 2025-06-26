@@ -8,7 +8,6 @@ require('dotenv').config(); // Load environment variables from .env
 const authRoutes = require('./routes/authRoutes'); // Import auth routes
 const categoryRoutes = require('./routes/categoryRoutes');
 const dishRoutes = require('./routes/dishRoutes'); // Import dish routes
-const restaurantRoutes = require('./routes/restaurantRoutes'); // Import restaurant routes
 const responseFormatter = require('./middleware/responseFormatter');
 const { protect } = require('./middleware/authMiddleware'); // Import protect middleware
 const userRoutes = require('./routes/userRoutes'); // Import user routes
@@ -41,11 +40,10 @@ app.use(limiter);
 app.use('/api/auth', authRoutes); // Add auth routes, prefixed with /api/auth
 app.use('/api/categories', protect, categoryRoutes); // Protect category routes
 app.use('/api/dishes', protect, dishRoutes); // Protect dish routes
-app.use('/api/restaurants', protect, restaurantRoutes); // Protect restaurant routes
 app.use('/api/user', protect, userRoutes); // Protect user routes
 
 app.get('/', (req, res) => {
-    res.send('Restaurant Menu Backend is running!');
+    res.send('QR Menu Menu Backend is running!');
 });
 
 // Global error handler

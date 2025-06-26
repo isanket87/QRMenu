@@ -3,7 +3,6 @@ const express = require('express');
 const authController = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware'); // Import protect
 const authorizeRoles = require('../middleware/roleMiddleware');
-const restaurantController = require('../controllers/restaurantController');
 const router = express.Router();
 
 router.post('/register', authController.register);
@@ -17,14 +16,6 @@ router.post(
     (req, res) => {
         res.json({ message: 'Admin and Super Admin content accessible' });
     }
-);
-
-// Only allow admin or super_admin to create a restaurant
-router.post(
-    '/restaurant',
-    protect, // Add protect middleware
-    authorizeRoles('admin', 'superadmin'),
-    restaurantController.createRestaurant
 );
 
 module.exports = router;

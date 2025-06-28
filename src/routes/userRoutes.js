@@ -13,26 +13,22 @@ router.post(
 
 router.put(
     '/:id',
-    authorizeRoles('admin', 'superadmin'),
     userController.updateUser
 );
 
 router.delete(
     '/:id',
-    authorizeRoles('admin', 'superadmin'),
     userController.deleteUser
 );
 
 router.get(
     '/',
-    authorizeRoles('admin', 'superadmin'),
     userController.getAllUsers // Supports pagination (e.g., ?page=1&limit=10) and search (e.g., ?q=searchTerm)
 );
 
 // Get user by ID (admin/super_admin only)
 router.get(
     '/:id',
-    authorizeRoles('admin', 'superadmin'),
     userController.getUserById
 );
 

@@ -94,7 +94,7 @@ exports.getCategoriesByUserId = async (req, res) => {
     const searchQuery = req.query.search || '';
 
     try {
-        const conditions = [`created_by = $1`, `status = true`];
+        const conditions = [`created_by = $1`]; // Removed status condition
         const queryParams = [userId];
         let paramIndex = 2;
 
@@ -105,7 +105,7 @@ exports.getCategoriesByUserId = async (req, res) => {
 
         const whereClause = `WHERE ${conditions.join(' AND ')}`;
 
-        const categoriesQuery = `SELECT * FROM categories ${whereClause} ORDER BY created_at DESC LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
+        const categoriesQuery = `SELECT * FROM categories ${whereClause} ORDER BY display_order ASC, id ASC LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
         const countQuery = `SELECT COUNT(*) FROM categories ${whereClause}`;
 
         const categoriesQueryParams = [...queryParams, perPage, offset];

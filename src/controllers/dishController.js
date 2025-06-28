@@ -27,7 +27,7 @@ exports.createDish = async (req, res) => {
 // Get all menu items for a user (paginated, optionally filter by category or search by name)
 exports.getDishes = async (req, res) => {
     const userId = req.user?.id;
-    const { category_id, search } = req.query; // changed q to search
+    const { category_id, search } = req.query;
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 10;
     const offset = (page - 1) * limit;
@@ -37,7 +37,7 @@ exports.getDishes = async (req, res) => {
     }
 
     try {
-        const conditions = [`created_by = $1`, `status = true`];
+        const conditions = [`created_by = $1`]; // Removed status condition
         const queryParams = [userId];
         let paramIndex = 2;
 
@@ -46,14 +46,13 @@ exports.getDishes = async (req, res) => {
             queryParams.push(category_id);
         }
 
-        if (search) { // changed q to search
+        if (search) {
             conditions.push(`LOWER(name) LIKE $${paramIndex++}`);
             queryParams.push(`%${search.toLowerCase()}%`);
         }
 
         const whereClause = `WHERE ${conditions.join(' AND ')}`;
 
-        // Using created_at for ordering to get latest dishes first, similar to categories.
         const dishesQuery = `SELECT * FROM dishes ${whereClause} ORDER BY created_at DESC LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
         const countQuery = `SELECT COUNT(*) FROM dishes ${whereClause}`;
 

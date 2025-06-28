@@ -85,71 +85,44 @@ exports.deleteUser = async (req, res) => {
 
 // Get all users with pagination
 exports.getAllUsers = async (req, res) => {
-    const loggedInUserRole = req.user?.role;
-
-    const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 10;
-    const offset = (page - 1) * limit;
-    const searchQuery = req.query.q || '';
-
-    const conditions = [];
-    const queryParams = []; // Parameters for the WHERE clause
-    let paramIndex = 1;
-
-    // Role-based filtering
-    if (loggedInUserRole === 'admin') {
-        // Admins see other 'admin' and 'user' roles.
-        conditions.push(`role IN ($${paramIndex++}, $${paramIndex++})`);
-        queryParams.push('admin', 'user');
-    } else if (loggedInUserRole === 'superadmin') {
-        // Super admins see all users. No specific role filter added here.
-    } else {
-        // This case should ideally be prevented by route-level authorization.
-        // If a role without explicit permission reaches here, return empty.
-        return res.json({
-            users: [],
-            pagination: { total: 0, page, pages: 0 }
-        });
-    }
-
-    // Search query filtering
-    if (searchQuery) {
-        // The same parameter $${paramIndex} is used for both full_name and email ILIKE
-        conditions.push(`(full_name ILIKE $${paramIndex} OR email ILIKE $${paramIndex})`);
-        queryParams.push(`%${searchQuery}%`);
-        paramIndex++; // Increment after adding the parameter to queryParams
-    }
-
-    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
-
-    const usersQueryString = `SELECT ${userFieldsToReturn} FROM users ${whereClause} ORDER BY id LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
-    const usersQueryParams = [...queryParams, limit, offset]; // Add limit and offset for the main query
-
-    const countQueryString = `SELECT COUNT(*) FROM users ${whereClause}`;
-    // countQueryParams are the same as queryParams for the WHERE clause (no limit/offset)
-    const countQueryParams = [...queryParams];
+    const currentPage = parseInt(req.query.page, 10) || 1;
+    const perPage = parseInt(req.query.limit, 10) || 10;
+    const offset = (currentPage - 1) * perPage;
+    const search = req.query.search || '';
 
     try {
-        const usersResult = await pool.query(usersQueryString, usersQueryParams);
-        const countResult = await pool.query(countQueryString, countQueryParams);
+        let baseQuery = 'FROM users';
+        let whereClause = '';
+        let queryParams = [];
+        let paramIndex = 1;
 
-        const total = parseInt(countResult.rows[0].count, 10);
-        let numPages = 0;
-        if (total > 0) {
-            numPages = (limit > 0) ? Math.ceil(total / limit) : 1;
+        if (search) {
+            whereClause = ` WHERE full_name ILIKE $${paramIndex} OR email ILIKE $${paramIndex}`;
+            queryParams.push(`%${search}%`);
+            paramIndex++;
         }
 
+        const usersResult = await pool.query(
+            `SELECT * ${baseQuery}${whereClause} ORDER BY id LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`,
+            [...queryParams, perPage, offset]
+        );
+        const countResult = await pool.query(
+            `SELECT COUNT(*) ${baseQuery}${whereClause}`,
+            queryParams
+        );
+        const totalItems = parseInt(countResult.rows[0].count, 10);
+        const totalPages = Math.ceil(totalItems / perPage);
         res.json({
-            data: usersResult.rows,
+            users: usersResult.rows,
             pagination: {
-                total,
-                page,
-                pages: numPages
+                currentPage,
+                perPage,
+                totalItems,
+                totalPages
             }
         });
     } catch (err) {
-        console.error('Error in getAllUsers:', err.message, err.stack);
-        res.status(500).json({ error: 'Failed to retrieve users.' });
+        res.status(400).json({ error: err.message });
     }
 };
 

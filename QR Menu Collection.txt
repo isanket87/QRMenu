@@ -1,0 +1,391 @@
+{
+  "info": {
+    "name": "QRMenu Complete API Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "protocol", "value": "http" },
+    { "key": "hostName", "value": "localhost" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "User Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json", "type": "text" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Jane Doe\",\n  \"businessName\": \"Jane's Cafe\",\n  \"phoneNumber\": \"1234567890\",\n  \"email\": \"jane@example.com\",\n  \"password\": \"password123\",\n  \"city\": \"City\",\n  \"state\": \"State\",\n  \"country\": \"Country\",\n  \"role\": \"user\"\n}"
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostName}}/api/register",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostName}}"],
+              "path": ["api", "register"]
+            }
+          }
+        },
+        {
+          "name": "User Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json", "type": "text" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"jane@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostName}}/api/login",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostName}}"],
+              "path": ["api", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Management",
+      "item": [
+        {
+          "name": "Add User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json", "type": "text" },
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"John Doe\",\n  \"businessName\": \"Doe's Cafe\",\n  \"phoneNumber\": \"1234567890\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\",\n  \"city\": \"City\",\n  \"state\": \"State\",\n  \"country\": \"Country\",\n  \"role\": \"user\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostName}}/api/user",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostName}}"],
+              "path": ["api", "user"]
+            }
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json", "type": "text" },
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Jane Doe\",\n  \"city\": \"New City\"\n}"
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostName}}/api/user/1",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostName}}"],
+              "path": ["api", "user", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{hostName}}/api/user/1",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostName}}"],
+              "path": ["api", "user", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get All Users (Paginated)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{hostName}}/api/users?page=1&limit=10",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostName}}"],
+              "path": ["api", "users"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{hostName}}/api/users/search?search=john",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostName}}"],
+              "path": ["api", "users", "search"],
+              "query": [
+                { "key": "search", "value": "john" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Category",
+      "item": [
+        {
+          "name": "Create Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json", "type": "text" },
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Starters\",\n  \"description\": \"Begin your meal\",\n  \"display_order\": 1\n}"
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostName}}/api/category",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostName}}"],
+              "path": ["api", "category"]
+            }
+          }
+        },
+        {
+          "name": "Update Category",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json", "type": "text" },
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Starters\",\n  \"status\": false\n}"
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostName}}/api/category/1",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostName}}"],
+              "path": ["api", "category", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Category (Soft)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{hostName}}/api/category/1",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostName}}"],
+              "path": ["api", "category", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get My Categories (Paginated)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{hostName}}/api/my-categories?page=1&limit=10",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostName}}"],
+              "path": ["api", "my-categories"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All My Categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{hostName}}/api/my-categories/all",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostName}}"],
+              "path": ["api", "my-categories", "all"]
+            }
+          }
+        },
+        {
+          "name": "Get Category By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{hostName}}/api/category/1",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostName}}"],
+              "path": ["api", "category", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dish",
+      "item": [
+        {
+          "name": "Create Dish",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json", "type": "text" },
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category_id\": 1,\n  \"name\": \"French Fries\",\n  \"description\": \"Crispy fries\",\n  \"price\": 99.99,\n  \"image_url\": \"https://img.com/fries.jpg\",\n  \"is_available\": true\n}"
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostName}}/api/dish",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostName}}"],
+              "path": ["api", "dish"]
+            }
+          }
+        },
+        {
+          "name": "Update Dish",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json", "type": "text" },
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated French Fries\",\n  \"status\": false\n}"
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostName}}/api/dish/1",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostName}}"],
+              "path": ["api", "dish", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete Dish (Soft)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{hostName}}/api/dish/1",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostName}}"],
+              "path": ["api", "dish", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get My Dishes (Paginated)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{hostName}}/api/my-dishes?page=1&limit=10",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostName}}"],
+              "path": ["api", "my-dishes"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Independent Dishes",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{hostName}}/api/my-dishes/independent",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostName}}"],
+              "path": ["api", "my-dishes", "independent"]
+            }
+          }
+        },
+        {
+          "name": "Get Dish By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{hostName}}/api/dish/1",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostName}}"],
+              "path": ["api", "dish", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Dishes By Category ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{hostName}}/api/my-dishes?category_id=1&page=1&limit=10",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostName}}"],
+              "path": ["api", "my-dishes"],
+              "query": [
+                { "key": "category_id", "value": "1" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

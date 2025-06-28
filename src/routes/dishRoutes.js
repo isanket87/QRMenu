@@ -1,12 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const dishController = require('../controllers/dishController');
+const { protect } = require('../middleware/authMiddleware');
 
-// Create dish - accessible by admin or super_admin
-router.post('/', dishController.createDish);
+// Create dish for the logged-in user
+router.post('/', protect, dishController.createDish);
 
-// Get all dishes for a restaurant (optionally filter by category)
-router.get('/', dishController.getDishes);
+// Get all dishes for the logged-in user (paginated, optionally filter by category)
+router.get('/', protect, dishController.getDishes);
+
+// Get all dishes for the logged-in user without pagination
+router.get('/all', protect, dishController.getAllMyDishes);
 
 // Get independent dishes (no category)
 router.get('/independent', dishController.getIndependentDishes);
@@ -14,16 +18,13 @@ router.get('/independent', dishController.getIndependentDishes);
 // Get by id
 router.get('/:id', dishController.getDishById);
 
-// Get by name (query: ?restaurant_id=1&name=Pizza)
-router.get('/by-name', dishController.getDishByName);
-
-// Search (query: ?restaurant_id=1&q=pizza)
-router.get('/search', dishController.searchDishes);
+// Get all dishes for a specific category (paginated)
+router.get('/category/:categoryId', dishController.getDishesByCategoryId);
 
 // Update
-router.put('/:id', dishController.updateDish);
+router.put('/:id', protect, dishController.updateDish);
 
 // Soft delete
-router.delete('/:id', dishController.softDeleteDish);
+router.delete('/:id', protect, dishController.softDeleteDish);
 
 module.exports = router;

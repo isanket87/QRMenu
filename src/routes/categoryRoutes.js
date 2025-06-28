@@ -7,12 +7,6 @@ const authorizeRoles = require('../middleware/roleMiddleware');
 // Create - accessible by user or super_admin
 router.post('/', protect, authorizeRoles('admin','client', 'superadmin'), categoryController.createCategory);
 
-// Get by name (query: ?restaurant_id=1&name=Starters)
-router.get('/by-name', categoryController.getCategoryByName);
-
-// Search (query: ?restaurant_id=1&q=star)
-router.get('/search', categoryController.searchCategories);
-
 // Get all categories by the logged-in user
 router.get('/', protect, categoryController.getCategoriesByUserId);
 

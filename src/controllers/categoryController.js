@@ -4,14 +4,11 @@ const pool = require('../config/db');
 exports.createCategory = async (req, res) => {
     const { restaurant_id, name, description, display_order } = req.body;
     const created_by = req.user?.id;
-    // if (!restaurant_id || !name) {
-    //     return res.status(400).json({ message: 'restaurant_id and name are required.' });
-    // }
     try {
         const result = await pool.query(
-            `INSERT INTO categories (restaurant_id, name, description, display_order, created_by)
-             VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-            [restaurant_id, name, description || null, display_order || 0, created_by]
+            `INSERT INTO categories (restaurant_id, name, description, display_order, created_by, status)
+             VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+            [restaurant_id, name, description || null, display_order || 0, created_by, true]
         );
         res.status(201).json(result.rows[0]);
     } catch (err) {
@@ -22,12 +19,10 @@ exports.createCategory = async (req, res) => {
 
 // Bulk update display order for categories
 exports.bulkUpdateCategoryDisplayOrder = async (req, res) => {
-    const categoryUpdates = req.body; // Expecting an array: [{ id: 1, display_order: 0 }, ...]
+    const categoryUpdates = req.body;
     const updated_by = req.user?.id;
 
     if (!updated_by) {
-        // This should ideally be caught by the 'protect' middleware,
-        // but it's a good safeguard.
         return res.status(401).json({ message: 'Unauthorized: User not identified.' });
     }
 
@@ -61,8 +56,8 @@ exports.bulkUpdateCategoryDisplayOrder = async (req, res) => {
             const result = await client.query(
                 `UPDATE categories
                  SET display_order = $1, updated_by = $2, updated_at = NOW()
-                 WHERE id = $3 AND status = 'active'
-                 RETURNING *`, // Returns all fields of the updated row
+                 WHERE id = $3 AND status = true
+                 RETURNING *`,
                 [update.display_order, updated_by, update.id]
             );
 
@@ -87,7 +82,7 @@ exports.bulkUpdateCategoryDisplayOrder = async (req, res) => {
 
 // Get all categories created by a specific user
 exports.getCategoriesByUserId = async (req, res) => {
-    const userId = req.user?.id; // Get user ID from the authenticated user
+    const userId = req.user?.id;
 
     if (!userId) {
         return res.status(401).json({ message: 'Unauthorized: User not identified.' });
@@ -99,7 +94,7 @@ exports.getCategoriesByUserId = async (req, res) => {
     const searchQuery = req.query.search || '';
 
     try {
-        const conditions = [`created_by = $1`, `status = 'active'`];
+        const conditions = [`created_by = $1`, `status = true`];
         const queryParams = [userId];
         let paramIndex = 2;
 
@@ -141,16 +136,15 @@ exports.getCategoriesByUserId = async (req, res) => {
 
 // Get ALL categories for the logged-in user without pagination
 exports.getAllMyCategories = async (req, res) => {
-    const userId = req.user?.id; // Get user ID from the authenticated user
+    const userId = req.user?.id;
 
     if (!userId) {
-        // This should be caught by the 'protect' middleware, but it's a good safeguard.
         return res.status(401).json({ message: 'Unauthorized: User not identified.' });
     }
 
     try {
         const result = await pool.query(
-            `SELECT * FROM categories WHERE created_by = $1 AND status = 'active' ORDER BY display_order ASC, id ASC`,
+            `SELECT * FROM categories WHERE created_by = $1 AND status = true ORDER BY display_order ASC, id ASC`,
             [userId]
         );
         res.json(result.rows);
@@ -165,7 +159,7 @@ exports.getCategoriesByRestaurant = async (req, res) => {
     const { restaurant_id } = req.params;
     try {
         const result = await pool.query(
-            `SELECT * FROM categories WHERE restaurant_id = $1 AND status = 'active' ORDER BY display_order ASC, id ASC`,
+            `SELECT * FROM categories WHERE restaurant_id = $1 AND status = true ORDER BY display_order ASC, id ASC`,
             [restaurant_id]
         );
         res.json(result.rows);
@@ -180,7 +174,7 @@ exports.getCategoryById = async (req, res) => {
     const { id } = req.params;
     try {
         const result = await pool.query(
-            `SELECT * FROM categories WHERE id = $1 AND status = 'active'`,
+            `SELECT * FROM categories WHERE id = $1 AND status = true`,
             [id]
         );
         if (result.rows.length === 0) {
@@ -201,7 +195,7 @@ exports.getCategoryByName = async (req, res) => {
     }
     try {
         const result = await pool.query(
-            `SELECT * FROM categories WHERE restaurant_id = $1 AND LOWER(name) = $2 AND status = 'active'`,
+            `SELECT * FROM categories WHERE restaurant_id = $1 AND LOWER(name) = $2 AND status = true`,
             [restaurant_id, name.toLowerCase()]
         );
         if (result.rows.length === 0) {
@@ -222,7 +216,7 @@ exports.searchCategories = async (req, res) => {
     }
     try {
         const result = await pool.query(
-            `SELECT * FROM categories WHERE restaurant_id = $1 AND status = 'active' AND LOWER(name) LIKE $2 ORDER BY display_order ASC, id ASC`,
+            `SELECT * FROM categories WHERE restaurant_id = $1 AND status = true AND LOWER(name) LIKE $2 ORDER BY display_order ASC, id ASC`,
             [restaurant_id, `%${q?.toLowerCase() || ''}%`]
         );
         res.json(result.rows);
@@ -235,7 +229,7 @@ exports.searchCategories = async (req, res) => {
 // Update category
 exports.updateCategory = async (req, res) => {
     const { id } = req.params;
-    const { name, description, display_order } = req.body;
+    const { name, description, display_order, status } = req.body;
     const updated_by = req.user?.id;
     try {
         const result = await pool.query(
@@ -243,11 +237,12 @@ exports.updateCategory = async (req, res) => {
                 name = COALESCE($1, name),
                 description = COALESCE($2, description),
                 display_order = COALESCE($3, display_order),
-                updated_by = $4,
+                status = COALESCE($4, status),
+                updated_by = $5,
                 updated_at = NOW()
-            WHERE id = $5 AND status = 'active'
+            WHERE id = $6
             RETURNING *`,
-            [name, description, display_order, updated_by, id]
+            [name, description, display_order, typeof status === 'boolean' ? status : null, updated_by, id]
         );
         if (result.rows.length === 0) {
             return res.status(404).json({ message: 'Category not found or already deleted' });
@@ -266,7 +261,7 @@ exports.softDeleteCategory = async (req, res) => {
     const updated_by = req.user?.id;
     try {
         const result = await pool.query(
-            `UPDATE categories SET status = 'deleted', updated_by = $1, updated_at = NOW() WHERE id = $2 AND status = 'active' RETURNING *`,
+            `UPDATE categories SET status = false, updated_by = $1, updated_at = NOW() WHERE id = $2 AND status = true RETURNING *`,
             [updated_by, id]
         );
         if (result.rows.length === 0) {
@@ -281,20 +276,18 @@ exports.softDeleteCategory = async (req, res) => {
 
 // Get all categories for a specific user (super_admin access)
 exports.getAdminCategoriesForUser = async (req, res) => {
-    const { userId } = req.params; // Get target user ID from route parameters
+    const { userId } = req.params;
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 10;
     const offset = (page - 1) * limit;
 
     if (!userId) {
-        // This check might be redundant if the route enforces userId param,
-        // but good for robustness.
         return res.status(400).json({ message: 'Target User ID is required in the path.' });
     }
 
     try {
-        const categoriesQuery = `SELECT * FROM categories WHERE created_by = $1 AND status = 'active' ORDER BY display_order ASC, id ASC LIMIT $2 OFFSET $3`;
-        const countQuery = `SELECT COUNT(*) FROM categories WHERE created_by = $1 AND status = 'active'`;
+        const categoriesQuery = `SELECT * FROM categories WHERE created_by = $1 AND status = true ORDER BY display_order ASC, id ASC LIMIT $2 OFFSET $3`;
+        const countQuery = `SELECT COUNT(*) FROM categories WHERE created_by = $1 AND status = true`;
 
         const [categoriesResult, countResult] = await Promise.all([
             pool.query(categoriesQuery, [userId, limit, offset]),

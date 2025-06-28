@@ -352,7 +352,7 @@
 					"response": []
 				},
 				{
-					"name": "Get My Categories",
+					"name": "Get My Categories (Paginated & Searchable)",
 					"_postman_id": "b5c6d7e8-f9a0-1234-5678-90abcdef1234",
 					"request": {
 						"method": "GET",
@@ -360,12 +360,35 @@
 							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
 						],
 						"url": {
-							"raw": "{{protocol}}://{{hostName}}/api/categories/my-categories",
+							"raw": "{{protocol}}://{{hostName}}/api/categories?page=1&limit=10&q=",
 							"protocol": "{{protocol}}",
-							"host": ["{{hostName}}"],
-							"path": ["api", "categories", "my-categories"]
+							"host": [
+								"{{hostName}}"
+							],
+							"path": [
+								"api",
+								"categories"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "The page number to retrieve."
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "The number of items per page."
+								},
+								{
+									"key": "q",
+									"value": "",
+									"description": "Search term to filter categories by name.",
+									"disabled": true
+								}
+							]
 						},
-						"description": "Get all categories created by the logged-in user."
+						"description": "Get all categories created by the logged-in user, with support for pagination and searching by name. The response includes a `pagination` object with details like `totalItems`, `totalPages`, `currentPage`, and `perPage`."
 					},
 					"response": []
 				},
@@ -531,7 +554,7 @@
 					"response": []
 				},
 				{
-					"name": "Admin: Get Categories for User",
+					"name": "Admin: Get Categories for User (Paginated)",
 					"_postman_id": "c3d4e5f6-a7b8-9012-3456-7890abcdef12",
 					"request": {
 						"method": "GET",
@@ -539,24 +562,45 @@
 							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
 						],
 						"url": {
-							"raw": "{{protocol}}://{{hostName}}/api/categories/admin/user/USER_ID_HERE/categories",
+							"raw": "{{protocol}}://{{hostName}}/api/categories/admin/user/:userId/categories?page=1&limit=10",
 							"protocol": "{{protocol}}",
-							"host": ["{{hostName}}"],
-							"path": ["api", "categories", "admin", "user", "USER_ID_HERE", "categories"],
+							"host": [
+								"{{hostName}}"
+							],
+							"path": [
+								"api",
+								"categories",
+								"admin",
+								"user",
+								":userId",
+								"categories"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "The page number to retrieve."
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "The number of items per page."
+								}
+							],
 							"variable": [
 								{
-									"key": "USER_ID_HERE",
+									"key": "userId",
 									"value": "1",
 									"description": "Replace with the actual User ID"
 								}
 							]
 						},
-						"description": "Get all categories for a specific user (super_admin access only). Replace USER_ID_HERE in the URL with the target user's ID."
+						"description": "Get a paginated list of categories for a specific user (super_admin access only). Replace `:userId` in the URL with the target user's ID. The response includes a `pagination` object with details like `totalItems`, `totalPages`, `currentPage`, and `perPage`."
 					},
 					"response": []
 				},
 				{
-					"name": "Get Categories by User ID",
+					"name": "Get Categories for a User (Paginated)",
 					"_postman_id": "d3e4f5a6-b7c8-9012-3456-7890abcdef12",
 					"request": {
 						"method": "GET",
@@ -564,19 +608,38 @@
 							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
 						],
 						"url": {
-							"raw": "{{protocol}}://{{hostName}}/api/categories/by-user/USER_ID_HERE",
+							"raw": "{{protocol}}://{{hostName}}/api/categories/by-user/:userId?page=1&limit=10",
 							"protocol": "{{protocol}}",
-							"host": ["{{hostName}}"],
-							"path": ["api", "categories", "by-user", "USER_ID_HERE"],
+							"host": [
+								"{{hostName}}"
+							],
+							"path": [
+								"api",
+								"categories",
+								"by-user",
+								":userId"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "The page number to retrieve."
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "The number of items per page."
+								}
+							],
 							"variable": [
 								{
-									"key": "USER_ID_HERE",
+									"key": "userId",
 									"value": "1",
 									"description": "Replace with the actual User ID"
 								}
 							]
 						},
-						"description": "Get all categories for a specific user by their ID (admin or super_admin access). Replace USER_ID_HERE in the URL with the target user's ID."
+						"description": "Get a paginated list of categories for a specific user by their ID (admin or super_admin access). Replace `:userId` in the URL with the target user's ID. The response includes a `pagination` object with details like `totalItems`, `totalPages`, `currentPage`, and `perPage`."
 					},
 					"response": []
 				}

@@ -207,123 +207,6 @@
 			]
 		},
 		{
-			"name": "Restaurants",
-			"description": "Restaurant related endpoints.",
-			"_postman_id": "e3f4a5b6-c7d8-9012-3456-7890abcdef12",
-			"item": [
-				{
-					"name": "Create Restaurant",
-					"_postman_id": "f3a4b5c6-d7e8-9012-3456-7890abcdef12",
-					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json", "type": "text" },
-							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Pizza Palace\",\n  \"address\": \"123 Main St\",\n  \"description\": \"Best pizza in town\",\n  \"opening_time\": \"09:00\",\n  \"closing_time\": \"23:00\",\n  \"type\": \"restaurant\",\n  \"food_type\": \"both\",\n  \"phone_number\": \"1234567890\",\n  \"email\": \"info@pizza.com\",\n  \"website\": \"https://pizza.com\",\n  \"image_url\": \"https://img.com/pizza.jpg\"\n}"
-						},
-						"url": {
-							"raw": "{{protocol}}://{{hostName}}/api/restaurants",
-							"protocol": "{{protocol}}",
-							"host": ["{{hostName}}"],
-							"path": ["api", "restaurants"]
-						},
-						"description": "Create a new restaurant (admin/super_admin only)."
-					},
-					"response": []
-				},
-				{
-					"name": "Get All Restaurants",
-					"_postman_id": "a4b5c6d7-e8f9-0123-4567-890abcdef123",
-					"request": {
-						"method": "GET",
-						"url": {
-							"raw": "{{protocol}}://{{hostName}}/api/restaurants",
-							"protocol": "{{protocol}}",
-							"host": ["{{hostName}}"],
-							"path": ["api", "restaurants"]
-						},
-						"description": "Get all restaurants."
-					},
-					"response": []
-				},
-				{
-					"name": "Get Restaurant by ID",
-					"_postman_id": "b4c5d6e7-f8a9-0123-4567-890abcdef123",
-					"request": {
-						"method": "GET",
-						"url": {
-							"raw": "{{protocol}}://{{hostName}}/api/restaurants/1",
-							"protocol": "{{protocol}}",
-							"host": ["{{hostName}}"],
-							"path": ["api", "restaurants", "1"]
-						},
-						"description": "Get restaurant by ID."
-					},
-					"response": []
-				},
-				{
-					"name": "Search Restaurants",
-					"_postman_id": "c4d5e6f7-a8b9-0123-4567-890abcdef123",
-					"request": {
-						"method": "GET",
-						"url": {
-							"raw": "{{protocol}}://{{hostName}}/api/restaurants/search?q=pizza",
-							"protocol": "{{protocol}}",
-							"host": ["{{hostName}}"],
-							"path": ["api", "restaurants", "search"],
-							"query": [{ "key": "q", "value": "pizza" }]
-						},
-						"description": "Search restaurants by name or address."
-					},
-					"response": []
-				},
-				{
-					"name": "Update Restaurant",
-					"_postman_id": "d4e5f6a7-b8c9-0123-4567-890abcdef123",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{ "key": "Content-Type", "value": "application/json", "type": "text" },
-							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Updated Pizza Palace\"\n}"
-						},
-						"url": {
-							"raw": "{{protocol}}://{{hostName}}/api/restaurants/1",
-							"protocol": "{{protocol}}",
-							"host": ["{{hostName}}"],
-							"path": ["api", "restaurants", "1"]
-						},
-						"description": "Update restaurant (admin/super_admin only)."
-					},
-					"response": []
-				},
-				{
-					"name": "Soft Delete Restaurant",
-					"_postman_id": "e4f5a6b7-c8d9-0123-4567-890abcdef123",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
-						],
-						"url": {
-							"raw": "{{protocol}}://{{hostName}}/api/restaurants/1",
-							"protocol": "{{protocol}}",
-							"host": ["{{hostName}}"],
-							"path": ["api", "restaurants", "1"]
-						},
-						"description": "Soft delete restaurant (admin/super_admin only)."
-					},
-					"response": []
-				}
-			]
-		},
-		{
 			"name": "Categories",
 			"description": "Category management endpoints.",
 			"_postman_id": "f4a5b6c7-d8e9-0123-4567-890abcdef123",
@@ -423,8 +306,6 @@
 						"method": "GET",
 						"url": {
 							"raw": "{{protocol}}://{{hostName}}/api/categories/restaurant/1",
-							"protocol": "{{protocol}}",
-							"host": ["{{hostName}}"],
 							"path": ["api", "categories", "restaurant", "1"]
 						},
 						"description": "Get all categories for a restaurant."
@@ -453,8 +334,6 @@
 						"method": "GET",
 						"url": {
 							"raw": "{{protocol}}://{{hostName}}/api/categories/by-name?restaurant_id=1&name=Starters",
-							"protocol": "{{protocol}}",
-							"host": ["{{hostName}}"],
 							"path": ["api", "categories", "by-name"],
 							"query": [
 								{ "key": "restaurant_id", "value": "1" },
@@ -696,8 +575,6 @@
 						"method": "GET",
 						"url": {
 							"raw": "{{protocol}}://{{hostName}}/api/dishes?restaurant_id=1&category_id=2",
-							"protocol": "{{protocol}}",
-							"host": ["{{hostName}}"],
 							"path": ["api", "dishes"],
 							"query": [
 								{ "key": "restaurant_id", "value": "1" },

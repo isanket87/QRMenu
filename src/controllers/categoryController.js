@@ -105,7 +105,7 @@ exports.getCategoriesByUserId = async (req, res) => {
 
         const whereClause = `WHERE ${conditions.join(' AND ')}`;
 
-        const categoriesQuery = `SELECT * FROM categories ${whereClause} ORDER BY display_order ASC, id ASC LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
+        const categoriesQuery = `SELECT * FROM categories ${whereClause} ORDER BY created_at DESC LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
         const countQuery = `SELECT COUNT(*) FROM categories ${whereClause}`;
 
         const categoriesQueryParams = [...queryParams, perPage, offset];
@@ -240,7 +240,7 @@ exports.updateCategory = async (req, res) => {
                 status = COALESCE($4, status),
                 updated_by = $5,
                 updated_at = NOW()
-            WHERE id = $6
+            WHERE id = $6 AND status = true
             RETURNING *`,
             [name, description, display_order, typeof status === 'boolean' ? status : null, updated_by, id]
         );

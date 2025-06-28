@@ -89,35 +89,48 @@ exports.bulkUpdateCategoryDisplayOrder = async (req, res) => {
 exports.getCategoriesByUserId = async (req, res) => {
     const userId = req.user?.id; // Get user ID from the authenticated user
 
-    // This check is mostly a safeguard. The `protect` middleware applied
-    // at the router level in server.js should ensure req.user and req.user.id exist.
-    // If not, `protect` would typically send a 401 before reaching here.
     if (!userId) {
         return res.status(401).json({ message: 'Unauthorized: User not identified.' });
     }
 
-    const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 10;
-    const offset = (page - 1) * limit;
+    const currentPage = parseInt(req.query.page, 10) || 1;
+    const perPage = parseInt(req.query.limit, 10) || 10;
+    const offset = (currentPage - 1) * perPage;
+    const searchQuery = req.query.search || '';
 
     try {
-        const categoriesQuery = `SELECT * FROM categories WHERE created_by = $1 AND status = 'active' ORDER BY display_order ASC, id ASC LIMIT $2 OFFSET $3`;
-        const countQuery = `SELECT COUNT(*) FROM categories WHERE created_by = $1 AND status = 'active'`;
+        const conditions = [`created_by = $1`, `status = 'active'`];
+        const queryParams = [userId];
+        let paramIndex = 2;
+
+        if (searchQuery) {
+            conditions.push(`LOWER(name) LIKE $${paramIndex++}`);
+            queryParams.push(`%${searchQuery.toLowerCase()}%`);
+        }
+
+        const whereClause = `WHERE ${conditions.join(' AND ')}`;
+
+        const categoriesQuery = `SELECT * FROM categories ${whereClause} ORDER BY display_order ASC, id ASC LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
+        const countQuery = `SELECT COUNT(*) FROM categories ${whereClause}`;
+
+        const categoriesQueryParams = [...queryParams, perPage, offset];
+        const countQueryParams = [...queryParams];
 
         const [categoriesResult, countResult] = await Promise.all([
-            pool.query(categoriesQuery, [userId, limit, offset]),
-            pool.query(countQuery, [userId])
+            pool.query(categoriesQuery, categoriesQueryParams),
+            pool.query(countQuery, countQueryParams)
         ]);
 
-        const total = parseInt(countResult.rows[0].count, 10);
-        const pages = Math.ceil(total / limit);
+        const totalItems = parseInt(countResult.rows[0].count, 10);
+        const totalPages = Math.ceil(totalItems / perPage);
 
         res.json({
             data: categoriesResult.rows,
             pagination: {
-                total,
-                page,
-                pages
+                currentPage,
+                perPage,
+                totalItems,
+                totalPages
             }
         });
     } catch (err) {

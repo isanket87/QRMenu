@@ -1,10 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const dishController = require('../controllers/dishController');
-const authorizeRoles = require('../middleware/roleMiddleware');
 
 // Create dish - accessible by admin or super_admin
-router.post('/', authorizeRoles('admin', 'superadmin'), dishController.createDish);
+router.post('/', dishController.createDish);
 
 // Get all dishes for a restaurant (optionally filter by category)
 router.get('/', dishController.getDishes);
@@ -22,9 +21,9 @@ router.get('/by-name', dishController.getDishByName);
 router.get('/search', dishController.searchDishes);
 
 // Update
-router.put('/:id', authorizeRoles('admin', 'superadmin'), dishController.updateDish);
+router.put('/:id', dishController.updateDish);
 
 // Soft delete
-router.delete('/:id', authorizeRoles('admin', 'superadmin'), dishController.softDeleteDish);
+router.delete('/:id', dishController.softDeleteDish);
 
 module.exports = router;

@@ -14,10 +14,10 @@ router.get('/by-name', categoryController.getCategoryByName);
 router.get('/search', categoryController.searchCategories);
 
 // Get all categories by the logged-in user
-router.get('/my-categories', protect, categoryController.getCategoriesByUserId);
+router.get('/', protect, categoryController.getCategoriesByUserId);
 
 // Get all categories by the logged-in user without pagination
-router.get('/my-categories/all', protect, categoryController.getAllMyCategories);
+router.get('/all', protect, categoryController.getAllMyCategories);
 
 // Get by id - This should come after more specific string routes
 router.get('/:id', categoryController.getCategoryById);

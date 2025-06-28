@@ -3,19 +3,19 @@ const pool = require('../config/db');
 // Create a menu item (with or without category)
 exports.createDish = async (req, res) => {
     const {
-        restaurant_id, category_id, name, description, price,
+        category_id, name, description, price,
         image_url, is_available
     } = req.body;
     const created_by = req.user?.id;
-    if (!restaurant_id || !name || !price) {
-        return res.status(400).json({ message: 'restaurant_id, name, and price are required.' });
+    if (!name || !price) {
+        return res.status(400).json({ message: 'Name and price are required.' });
     }
     try {
         const result = await pool.query(
             `INSERT INTO dishes
-            (restaurant_id, category_id, name, description, price, image_url, is_available, created_by)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
-            [restaurant_id, category_id || null, name, description || null, price, image_url || null, is_available ?? true, created_by]
+            (category_id, name, description, price, image_url, is_available, created_by)
+            VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+            [category_id || null, name, description || null, price, image_url || null, is_available ?? true, created_by]
         );
         res.status(201).json(result.rows[0]);
     } catch (err) {
@@ -24,15 +24,15 @@ exports.createDish = async (req, res) => {
     }
 };
 
-// Get all menu items for a restaurant (optionally filter by category)
+// Get all menu items for a user (optionally filter by category)
 exports.getDishes = async (req, res) => {
-    const { restaurant_id, category_id } = req.query;
-    if (!restaurant_id) {
-        return res.status(400).json({ message: 'restaurant_id is required.' });
+    const { userId, category_id } = req.query;
+    if (!userId) {
+        return res.status(400).json({ message: 'userId is required.' });
     }
     try {
-        let query = `SELECT * FROM dishes WHERE restaurant_id = $1 AND status = 'active'`;
-        let params = [restaurant_id];
+        let query = `SELECT * FROM dishes WHERE created_by = $1 AND status = 'active'`;
+        let params = [userId];
         if (category_id) {
             query += ` AND category_id = $2`;
             params.push(category_id);
@@ -45,16 +45,16 @@ exports.getDishes = async (req, res) => {
     }
 };
 
-// Get independent menu items (no category)
+// Get independent menu items (no category) for a user
 exports.getIndependentDishes = async (req, res) => {
-    const { restaurant_id } = req.query;
-    if (!restaurant_id) {
-        return res.status(400).json({ message: 'restaurant_id is required.' });
+    const { userId } = req.query;
+    if (!userId) {
+        return res.status(400).json({ message: 'userId is required.' });
     }
     try {
         const result = await pool.query(
-            `SELECT * FROM dishes WHERE restaurant_id = $1 AND category_id IS NULL AND status = 'active'`,
-            [restaurant_id]
+            `SELECT * FROM dishes WHERE created_by = $1 AND category_id IS NULL AND status = 'active'`,
+            [userId]
         );
         res.json(result.rows);
     } catch (err) {
@@ -81,16 +81,16 @@ exports.getDishById = async (req, res) => {
     }
 };
 
-// Get dish by name (for a restaurant)
+// Get dish by name (for a user)
 exports.getDishByName = async (req, res) => {
-    const { restaurant_id, name } = req.query;
-    if (!restaurant_id || !name) {
-        return res.status(400).json({ message: 'restaurant_id and name are required.' });
+    const { userId, name } = req.query;
+    if (!userId || !name) {
+        return res.status(400).json({ message: 'userId and name are required.' });
     }
     try {
         const result = await pool.query(
-            `SELECT * FROM dishes WHERE restaurant_id = $1 AND LOWER(name) = $2 AND status = 'active'`,
-            [restaurant_id, name.toLowerCase()]
+            `SELECT * FROM dishes WHERE created_by = $1 AND LOWER(name) = $2 AND status = 'active'`,
+            [userId, name.toLowerCase()]
         );
         if (result.rows.length === 0) {
             return res.status(404).json({ message: 'Dish not found' });
@@ -102,16 +102,16 @@ exports.getDishByName = async (req, res) => {
     }
 };
 
-// Search dishes by name (for a restaurant)
+// Search dishes by name (for a user)
 exports.searchDishes = async (req, res) => {
-    const { restaurant_id, q } = req.query;
-    if (!restaurant_id) {
-        return res.status(400).json({ message: 'restaurant_id is required.' });
+    const { userId, q } = req.query;
+    if (!userId) {
+        return res.status(400).json({ message: 'userId is required.' });
     }
     try {
         const result = await pool.query(
-            `SELECT * FROM dishes WHERE restaurant_id = $1 AND status = 'active' AND LOWER(name) LIKE $2`,
-            [restaurant_id, `%${q?.toLowerCase() || ''}%`]
+            `SELECT * FROM dishes WHERE created_by = $1 AND status = 'active' AND LOWER(name) LIKE $2`,
+            [userId, `%${q?.toLowerCase() || ''}%`]
         );
         res.json(result.rows);
     } catch (err) {

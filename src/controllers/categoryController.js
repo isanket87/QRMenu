@@ -126,6 +126,27 @@ exports.getCategoriesByUserId = async (req, res) => {
     }
 };
 
+// Get ALL categories for the logged-in user without pagination
+exports.getAllMyCategories = async (req, res) => {
+    const userId = req.user?.id; // Get user ID from the authenticated user
+
+    if (!userId) {
+        // This should be caught by the 'protect' middleware, but it's a good safeguard.
+        return res.status(401).json({ message: 'Unauthorized: User not identified.' });
+    }
+
+    try {
+        const result = await pool.query(
+            `SELECT * FROM categories WHERE created_by = $1 AND status = 'active' ORDER BY display_order ASC, id ASC`,
+            [userId]
+        );
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Error fetching all categories for logged-in user:', err.message, err.stack);
+        res.status(500).json({ message: 'Server error while fetching all user categories.' });
+    }
+};
+
 // Get all categories for a restaurant
 exports.getCategoriesByRestaurant = async (req, res) => {
     const { restaurant_id } = req.params;

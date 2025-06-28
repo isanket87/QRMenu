@@ -203,56 +203,6 @@
 						"description": "Get a specific user by their ID (admin/super_admin only). Replace the '1' in the URL path with the actual user ID."
 					},
 					"response": []
-				},
-				{
-					"name": "Admin: Get Categories for User",
-					"_postman_id": "c3d4e5f6-a7b8-9012-3456-7890abcdef12",
-					"request": {
-						"method": "GET",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
-						],
-						"url": {
-							"raw": "{{protocol}}://{{hostName}}/api/categories/admin/user/USER_ID_HERE",
-							"protocol": "{{protocol}}",
-							"host": ["{{hostName}}"],
-							"path": ["api", "categories", "admin", "user", "USER_ID_HERE"],
-							"variable": [
-								{
-									"key": "USER_ID_HERE",
-									"value": "1",
-									"description": "Replace with the actual User ID"
-								}
-							]
-						},
-						"description": "Get all categories for a specific user (super_admin access only). Replace USER_ID_HERE in the URL with the target user's ID."
-					},
-					"response": []
-				},
-				{
-					"name": "Get Categories by User ID",
-					"_postman_id": "d3e4f5a6-b7c8-9012-3456-7890abcdef12",
-					"request": {
-						"method": "GET",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
-						],
-						"url": {
-							"raw": "{{protocol}}://{{hostName}}/api/categories/by-user/USER_ID_HERE",
-							"protocol": "{{protocol}}",
-							"host": ["{{hostName}}"],
-							"path": ["api", "categories", "by-user", "USER_ID_HERE"],
-							"variable": [
-								{
-									"key": "USER_ID_HERE",
-									"value": "1",
-									"description": "Replace with the actual User ID"
-								}
-							]
-						},
-						"description": "Get all categories for a specific user by their ID (admin or super_admin access). Replace USER_ID_HERE in the URL with the target user's ID."
-					},
-					"response": []
 				}
 			]
 		},
@@ -420,6 +370,30 @@
 					"response": []
 				},
 				{
+					"name": "Get All My Categories (No Pagination)",
+					"_postman_id": "b5c6d7e8-f9a0-1234-5678-90abcdef1235",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories/my-categories/all",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{hostName}}"
+							],
+							"path": ["api", "categories", "my-categories", "all"]
+						},
+						"description": "Retrieves a complete list of all categories created by the currently logged-in user, without pagination. Useful for populating UI elements like dropdowns."
+					},
+					"response": []
+				},
+				{
 					"name": "Get All Categories for a Restaurant",
 					"_postman_id": "c5d6e7f8-a9b0-1234-5678-90abcdef1234",
 					"request": {
@@ -553,6 +527,56 @@
 							"path": ["api", "categories", "bulk-update-order"]
 						},
 						"description": "Updates the display order for multiple categories in bulk (admin or super_admin only).\n\n**Body:**\nAn array of category update objects. Each object must contain `id` (the category ID) and `display_order` (the new display order).\n\n**Response (Success Example):**\n```json\n{\n  \"message\": \"Bulk display order update processed. 3 operations successful out of 3 requested.\",\n  \"successfulOperations\": 3,\n  \"requestedOperations\": 3,\n  \"updatedCategories\": [\n    {\n      \"id\": 1,\n      \"restaurant_id\": 1,\n      \"name\": \"Starters\",\n      \"description\": \"Begin your meal\",\n      \"display_order\": 0,\n      \"status\": \"active\",\n      \"created_at\": \"2023-10-26T10:00:00.000Z\",\n      \"updated_at\": \"2023-10-27T12:30:00.000Z\",\n      \"created_by\": 10,\n      \"updated_by\": 12\n    }\n    // ... other updated categories\n  ]\n}\n```\n\n**Note:** If some categories specified in the request are not found or not active, `successfulOperations` will be less than `requestedOperations`. The `updatedCategories` array will only contain details for the categories that were actually updated."
+					},
+					"response": []
+				},
+				{
+					"name": "Admin: Get Categories for User",
+					"_postman_id": "c3d4e5f6-a7b8-9012-3456-7890abcdef12",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories/admin/user/USER_ID_HERE/categories",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories", "admin", "user", "USER_ID_HERE", "categories"],
+							"variable": [
+								{
+									"key": "USER_ID_HERE",
+									"value": "1",
+									"description": "Replace with the actual User ID"
+								}
+							]
+						},
+						"description": "Get all categories for a specific user (super_admin access only). Replace USER_ID_HERE in the URL with the target user's ID."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Categories by User ID",
+					"_postman_id": "d3e4f5a6-b7c8-9012-3456-7890abcdef12",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/categories/by-user/USER_ID_HERE",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "categories", "by-user", "USER_ID_HERE"],
+							"variable": [
+								{
+									"key": "USER_ID_HERE",
+									"value": "1",
+									"description": "Replace with the actual User ID"
+								}
+							]
+						},
+						"description": "Get all categories for a specific user by their ID (admin or super_admin access). Replace USER_ID_HERE in the URL with the target user's ID."
 					},
 					"response": []
 				}

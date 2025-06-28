@@ -124,8 +124,22 @@ Retrieves all categories created by the currently logged-in user.
 
 ---
 
+### Get All My Categories (No Pagination)
+**GET** `/api/categories/my-categories/all`
+**Headers:** `Authorization: Bearer <token>`
+Retrieves a complete list of all categories created by the currently logged-in user, without pagination. This is useful for populating UI elements like dropdowns.
+
+---
+
 ### Get All Categories for a Restaurant
 **GET** `/api/categories/restaurant/:restaurant_id`
+
+---
+
+### Get Categories for a User (Paginated)
+**GET** `/api/categories/by-user/:userId?page=1&limit=10`
+**Headers:** `Authorization: Bearer <token>` (admin/client/superadmin only)
+Retrieves a paginated list of categories for a specific user.
 
 ---
 

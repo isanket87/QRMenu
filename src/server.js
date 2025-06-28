@@ -39,7 +39,7 @@ app.use(limiter);
 
 app.use('/api/auth', authRoutes); // Add auth routes, prefixed with /api/auth
 app.use('/api/categories', protect, categoryRoutes); // Protect category routes
-app.use('/api/dishes', protect, dishRoutes); // Protect dish routes
+app.use('/api/dish', protect, dishRoutes); // Protect dish routes
 app.use('/api/user', protect, userRoutes); // Protect user routes
 
 app.get('/', (req, res) => {

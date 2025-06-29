@@ -179,7 +179,7 @@ exports.getDishById = async (req, res) => {
     const { id } = req.params;
     try {
         const result = await pool.query(
-            `SELECT * FROM dishes WHERE id = $1 AND status = true`,
+            `SELECT * FROM dishes WHERE id = $1`,
             [id]
         );
         if (result.rows.length === 0) {

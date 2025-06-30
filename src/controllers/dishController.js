@@ -282,21 +282,29 @@ exports.updateDish = async (req, res) => {
     }
 };
 
-// Soft delete dish
-exports.softDeleteDish = async (req, res) => {
+// Hard delete dish
+exports.hardDeleteDish = async (req, res) => {
     const { id } = req.params;
-    const updated_by = req.user?.id;
+    const deleted_by = req.user?.id;
     try {
-        const result = await pool.query(
-            `UPDATE dishes SET status = false, updated_by = $1, updated_at = NOW() WHERE id = $2 AND status = true RETURNING *`,
-            [updated_by, id]
+        // Optionally, check if the dish exists before deleting
+        const checkResult = await pool.query(
+            `SELECT * FROM dishes WHERE id = $1`,
+            [id]
         );
-        if (result.rows.length === 0) {
-            return res.status(404).json({ message: 'Dish not found or already deleted' });
+        if (checkResult.rows.length === 0) {
+            return res.status(404).json({ message: 'Dish not found' });
         }
-        res.json({ message: 'Dish deleted successfully.' });
+
+        // Perform hard delete
+        await pool.query(
+            `DELETE FROM dishes WHERE id = $1`,
+            [id]
+        );
+
+        res.json({ message: 'Dish permanently deleted.' });
     } catch (err) {
-        console.error('Error deleting dish:', err.message);
+        console.error('Error hard deleting dish:', err.message);
         res.status(500).json({ message: 'Server error' });
     }
 };

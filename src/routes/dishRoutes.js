@@ -25,6 +25,6 @@ router.get('/category/:categoryId', dishController.getDishesByCategoryId);
 router.put('/:id', protect, dishController.updateDish);
 
 // Soft delete
-router.delete('/:id', protect, dishController.softDeleteDish);
+router.delete('/:id', protect, dishController.hardDeleteDish);
 
 module.exports = router;

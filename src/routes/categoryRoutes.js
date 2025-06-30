@@ -42,7 +42,7 @@ router.put(
 router.put('/:id', protect, categoryController.updateCategory);
 
 // Soft delete
-router.delete('/:id', protect, categoryController.softDeleteCategory);
+router.delete('/:id', protect, categoryController.hardDeleteCategory);
 
 
 

@@ -256,20 +256,47 @@ exports.updateCategory = async (req, res) => {
 };
 
 // Soft delete category
-exports.softDeleteCategory = async (req, res) => {
+// exports.softDeleteCategory = async (req, res) => {
+//     const { id } = req.params;
+//     const updated_by = req.user?.id;
+//     try {
+//         const result = await pool.query(
+//             `UPDATE categories SET status = false, updated_by = $1, updated_at = NOW() WHERE id = $2 AND status = true RETURNING *`,
+//             [updated_by, id]
+//         );
+//         if (result.rows.length === 0) {
+//             return res.status(404).json({ message: 'Category not found or already deleted' });
+//         }
+//         res.json({ message: 'Category deleted successfully.' });
+//     } catch (err) {
+//         console.error('Error deleting category:', err.message);
+//         res.status(500).json({ message: 'Server error' });
+//     }
+// };
+
+// Hard delete category
+exports.hardDeleteCategory = async (req, res) => {
     const { id } = req.params;
-    const updated_by = req.user?.id;
+    const deleted_by = req.user?.id;
     try {
-        const result = await pool.query(
-            `UPDATE categories SET status = false, updated_by = $1, updated_at = NOW() WHERE id = $2 AND status = true RETURNING *`,
-            [updated_by, id]
+        // Optionally, you can check if the category exists before deleting
+        const checkResult = await pool.query(
+            `SELECT * FROM categories WHERE id = $1`,
+            [id]
         );
-        if (result.rows.length === 0) {
-            return res.status(404).json({ message: 'Category not found or already deleted' });
+        if (checkResult.rows.length === 0) {
+            return res.status(404).json({ message: 'Category not found' });
         }
-        res.json({ message: 'Category deleted successfully.' });
+
+        // Perform hard delete
+        await pool.query(
+            `DELETE FROM categories WHERE id = $1`,
+            [id]
+        );
+
+        res.json({ message: 'Category permanently deleted.' });
     } catch (err) {
-        console.error('Error deleting category:', err.message);
+        console.error('Error hard deleting category:', err.message);
         res.status(500).json({ message: 'Server error' });
     }
 };

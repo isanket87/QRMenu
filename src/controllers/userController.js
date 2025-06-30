@@ -39,17 +39,25 @@ exports.updateUser = async (req, res) => {
     } = req.body;
     try {
         let hashedPassword;
-        if (password) { // Only hash password if it's being updated
+        if (password) {
             hashedPassword = await bcrypt.hash(password, 10);
         }
 
-        // Build the query and parameters dynamically to only update password if provided
-        const fields = { full_name: fullName, business_name: businessName, phone_number: phoneNumber, email, city, state, country, status: isActive ? 'active' : 'inactive' };
-        if (role !== undefined) { // Only update role if provided in the request body
-            fields.role = role.toUpperCase();
-        }
-        if (hashedPassword) {
-            fields.password = hashedPassword;
+        // Only include fields that are provided (not undefined)
+        const fields = {};
+        if (fullName !== undefined) fields.full_name = fullName;
+        if (businessName !== undefined) fields.business_name = businessName;
+        if (phoneNumber !== undefined) fields.phone_number = phoneNumber;
+        if (email !== undefined) fields.email = email;
+        if (city !== undefined) fields.city = city;
+        if (state !== undefined) fields.state = state;
+        if (country !== undefined) fields.country = country;
+        if (isActive !== undefined) fields.status = isActive ? 'active' : 'inactive';
+        if (role !== undefined) fields.role = role.toUpperCase();
+        if (hashedPassword) fields.password = hashedPassword;
+
+        if (Object.keys(fields).length === 0) {
+            return res.status(400).json({ error: 'No fields provided for update.' });
         }
 
         const setClauses = Object.keys(fields).map((key, index) => `${key}=$${index + 1}`).join(', ');
@@ -60,12 +68,7 @@ exports.updateUser = async (req, res) => {
             [...values, id]
         );
         if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
-        // The RETURNING clause already selected the safe fields
-        if (result.rows.length > 0) {
-            res.json(result.rows[0]);
-        } else {
-            res.status(404).json({ error: 'User not found or update failed.' });
-        }
+        res.json(result.rows[0]);
     } catch (err) {
         res.status(400).json({ error: err.message });
     }

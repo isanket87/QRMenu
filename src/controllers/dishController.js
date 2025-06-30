@@ -37,24 +37,31 @@ exports.getDishes = async (req, res) => {
     }
 
     try {
-        const conditions = [`created_by = $1`]; // Removed status condition
+        const conditions = [`d.created_by = $1`];
         const queryParams = [userId];
         let paramIndex = 2;
 
         if (category_id) {
-            conditions.push(`category_id = $${paramIndex++}`);
+            conditions.push(`d.category_id = $${paramIndex++}`);
             queryParams.push(category_id);
         }
 
         if (search) {
-            conditions.push(`LOWER(name) LIKE $${paramIndex++}`);
+            conditions.push(`LOWER(d.name) LIKE $${paramIndex++}`);
             queryParams.push(`%${search.toLowerCase()}%`);
         }
 
         const whereClause = `WHERE ${conditions.join(' AND ')}`;
 
-        const dishesQuery = `SELECT * FROM dishes ${whereClause} ORDER BY created_at DESC LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
-        const countQuery = `SELECT COUNT(*) FROM dishes ${whereClause}`;
+        const dishesQuery = `
+            SELECT d.*, c.name AS category_name
+            FROM dishes d
+            LEFT JOIN categories c ON d.category_id = c.id
+            ${whereClause}
+            ORDER BY d.created_at DESC
+            LIMIT $${paramIndex++} OFFSET $${paramIndex++}
+        `;
+        const countQuery = `SELECT COUNT(*) FROM dishes d ${whereClause}`;
 
         const dishesQueryParams = [...queryParams, limit, offset];
         const countQueryParams = [...queryParams];

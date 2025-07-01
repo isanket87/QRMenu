@@ -258,7 +258,7 @@ exports.updateDish = async (req, res) => {
                 status = COALESCE($7, status),
                 updated_by = $8,
                 updated_at = NOW()
-            WHERE id = $9 AND status = true
+            WHERE id = $9
             RETURNING *`,
             [
                 category_id,
@@ -273,7 +273,7 @@ exports.updateDish = async (req, res) => {
             ]
         );
         if (result.rows.length === 0) {
-            return res.status(404).json({ message: 'Dish not found or already deleted' });
+            return res.status(404).json({ message: 'Dish not found' });
         }
         res.json(result.rows[0]);
     } catch (err) {

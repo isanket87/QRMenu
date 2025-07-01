@@ -240,12 +240,12 @@ exports.updateCategory = async (req, res) => {
                 status = COALESCE($4, status),
                 updated_by = $5,
                 updated_at = NOW()
-            WHERE id = $6 AND status = true
+            WHERE id = $6
             RETURNING *`,
             [name, description, display_order, typeof status === 'boolean' ? status : null, updated_by, id]
         );
         if (result.rows.length === 0) {
-            return res.status(404).json({ message: 'Category not found or already deleted' });
+            return res.status(404).json({ message: 'Category not found' });
         }
         res.json(result.rows[0]);
     } catch (err) {

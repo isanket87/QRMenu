@@ -16,8 +16,8 @@ exports.addUser = async (req, res) => {
         const result = await pool.query(
             `INSERT INTO users 
             (full_name, business_name, phone_number, email, password, city, state, country, role, status)
-            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING ${userFieldsToReturn}`,
-            [fullName, businessName, phoneNumber, email, hashedPassword, city, state, country, userRole, isActive ? 'active' : 'inactive']
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING ${userFieldsToReturn}`,
+            [fullName, businessName, phoneNumber, email, hashedPassword, city, state, country, userRole, isActive]
         );
         // The RETURNING clause already selected the safe fields
         if (result.rows.length > 0) {
@@ -52,7 +52,7 @@ exports.updateUser = async (req, res) => {
         if (city !== undefined) fields.city = city;
         if (state !== undefined) fields.state = state;
         if (country !== undefined) fields.country = country;
-        if (isActive !== undefined) fields.status = isActive ? 'active' : 'inactive';
+        if (isActive !== undefined) fields.status = isActive;
         if (role !== undefined) fields.role = role.toUpperCase();
         if (hashedPassword) fields.password = hashedPassword;
 
@@ -106,7 +106,7 @@ exports.getAllUsers = async (req, res) => {
         }
 
         const usersResult = await pool.query(
-            `SELECT * ${baseQuery}${whereClause} ORDER BY id LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`,
+            `SELECT ${userFieldsToReturn} ${baseQuery}${whereClause} ORDER BY id LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`,
             [...queryParams, perPage, offset]
         );
         const countResult = await pool.query(
@@ -116,7 +116,7 @@ exports.getAllUsers = async (req, res) => {
         const totalItems = parseInt(countResult.rows[0].count, 10);
         const totalPages = Math.ceil(totalItems / perPage);
         res.json({
-            users: usersResult.rows,
+            data: usersResult.rows,
             pagination: {
                 currentPage,
                 perPage,

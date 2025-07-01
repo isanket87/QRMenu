@@ -113,6 +113,11 @@ const login = async (req, res) => {
             return res.status(401).json({ message: 'Invalid credentials.' });
         }
 
+        // Prevent inactive users from logging in
+        if (user.status !== true) {
+            return res.status(403).json({ message: 'Account is inactive. Please contact support.' });
+        }
+
         const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
         res.json({ token, user: { id: user.id, fullName: user.full_name, email: user.email, role: user.role.toUpperCase() } });
     } catch (error) {

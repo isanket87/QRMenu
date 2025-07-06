@@ -35,7 +35,7 @@ exports.updateUser = async (req, res) => {
     const id = req.params.id;
     const {
         fullName, businessName, phoneNumber, email, password,
-        city, state, country, role, isActive
+        city, state, country, role, isActive, status // Accept status from body
     } = req.body;
     try {
         let hashedPassword;
@@ -53,6 +53,7 @@ exports.updateUser = async (req, res) => {
         if (state !== undefined) fields.state = state;
         if (country !== undefined) fields.country = country;
         if (isActive !== undefined) fields.status = isActive;
+        if (status !== undefined) fields.status = status; // Allow direct status update
         if (role !== undefined) fields.role = role.toUpperCase();
         if (hashedPassword) fields.password = hashedPassword;
 

@@ -6,9 +6,9 @@ exports.createCategory = async (req, res) => {
     const created_by = req.user?.id;
     try {
         const result = await pool.query(
-            `INSERT INTO categories (restaurant_id, name, description, display_order, created_by, status)
-             VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-            [restaurant_id, name, description || null, display_order || 0, created_by, true]
+            `INSERT INTO categories (name, description, display_order, created_by, status)
+             VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+            [name, description || null, display_order || 0, created_by, true]
         );
         res.status(201).json(result.rows[0]);
     } catch (err) {

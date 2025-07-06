@@ -119,7 +119,7 @@ const login = async (req, res) => {
         }
 
         const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
-        res.json({ token, user: { id: user.id, fullName: user.full_name, email: user.email, role: user.role.toUpperCase() } });
+        res.json({ token, user: { id: user.id, fullName: user.full_name, email: user.email ,qu_url: user.qr_code_url, role: user.role.toUpperCase() } });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ message: 'Server error during login.' });

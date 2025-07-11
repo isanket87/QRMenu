@@ -276,6 +276,7 @@ exports.updateDish = async (req, res) => {
         if (result.rows.length === 0) {
             return res.status(404).json({ message: 'Dish not found' });
         }
+        res.message = 'Food items updated successfully';
         res.json(result.rows[0]);
     } catch (err) {
         console.error('Error updating dish:', err.message);
@@ -303,6 +304,7 @@ exports.hardDeleteDish = async (req, res) => {
             [id]
         );
 
+        res.message = 'Food item deleted successfully';
         res.json({ message: 'Dish permanently deleted.' });
     } catch (err) {
         console.error('Error hard deleting dish:', err.message);

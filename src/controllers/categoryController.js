@@ -71,6 +71,7 @@ exports.bulkUpdateCategoryDisplayOrder = async (req, res) => {
         }
 
         await client.query('COMMIT');
+        res.message = 'Category updated successfully';
 
         res.status(200).json(resultsOfSuccessfulUpdates);
 
@@ -250,6 +251,7 @@ exports.updateCategory = async (req, res) => {
         if (result.rows.length === 0) {
             return res.status(404).json({ message: 'Category not found' });
         }
+        res.message = 'Category updated successfully';
         res.json(result.rows[0]);
     } catch (err) {
         console.error('Error updating:', err.message, err.stack);
@@ -296,7 +298,7 @@ exports.hardDeleteCategory = async (req, res) => {
             `DELETE FROM categories WHERE id = $1`,
             [id]
         );
-
+            res.message = 'User deleted successfully';
         res.json({ message: 'Category permanently deleted.' });
     } catch (err) {
         console.error('Error hard deleting category:', err.message);

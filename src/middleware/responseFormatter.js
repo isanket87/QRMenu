@@ -17,7 +17,7 @@ function responseFormatter(req, res, next) {
         ) {
             const formatted = {
                 success: true,
-                message: 'Request successful',
+                message: res.message || 'Request was successful',
                 data: responseData,
             };
             return oldSend.call(this, JSON.stringify(formatted));

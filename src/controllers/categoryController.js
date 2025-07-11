@@ -10,7 +10,10 @@ exports.createCategory = async (req, res) => {
              VALUES ($1, $2, $3, $4, $5) RETURNING *`,
             [name, description || null, display_order || 0, created_by, true]
         );
-        res.status(201).json(result.rows[0]);
+        res.message = 'Category created successfully';
+        res.status(201).json({
+                data: result.rows[0]
+            });
     } catch (err) {
         console.error('Error creating category:', err.message);
         res.status(500).json({ message: 'Server error' });

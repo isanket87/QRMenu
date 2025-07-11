@@ -75,7 +75,7 @@ const register = async (req, res) => {
             }
         }
         // --- End QR Code Logic ---
-
+        res.message = 'User created successfully';
         // Respond with a success message instead of token and user details
         res.status(201).json({ message: 'User registered successfully. Please login.' });
     } catch (error) {

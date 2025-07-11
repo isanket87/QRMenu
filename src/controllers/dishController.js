@@ -17,6 +17,7 @@ exports.createDish = async (req, res) => {
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
             [category_id || null, name, description || null, price, image_url || null, is_available ?? true, created_by, true]
         );
+        res.message = 'Food item created successfully';
         res.status(201).json(result.rows[0]);
     } catch (err) {
         console.error('Error creating dish:', err.message);

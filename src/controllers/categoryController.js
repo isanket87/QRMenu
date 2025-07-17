@@ -96,6 +96,8 @@ exports.getCategoriesByUserId = async (req, res) => {
     const perPage = parseInt(req.query.limit, 10) || 10;
     const offset = (currentPage - 1) * perPage;
     const searchQuery = req.query.search || '';
+    const { sortBy, sortOrder } = req.query;
+
 
     try {
         const conditions = [`created_by = $1`]; // Removed status condition
@@ -109,7 +111,14 @@ exports.getCategoriesByUserId = async (req, res) => {
 
         const whereClause = `WHERE ${conditions.join(' AND ')}`;
 
-        const categoriesQuery = `SELECT * FROM categories ${whereClause} ORDER BY display_order ASC, id ASC LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
+        // --- Sorting Logic ---
+        // Whitelist columns to prevent SQL injection
+        const allowedSortBy = ['name', 'display_order', 'created_at', 'status'];
+        const validSortBy = allowedSortBy.includes(sortBy) ? sortBy : 'display_order';
+        const validSortOrder = sortOrder?.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
+        const orderByClause = `ORDER BY ${validSortBy} ${validSortOrder}, id ASC`;
+
+        const categoriesQuery = `SELECT * FROM categories ${whereClause} ${orderByClause} LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
         const countQuery = `SELECT COUNT(*) FROM categories ${whereClause}`;
 
         const categoriesQueryParams = [...queryParams, perPage, offset];

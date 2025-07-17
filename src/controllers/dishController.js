@@ -125,6 +125,7 @@ exports.getAllMyDishes = async (req, res) => {
 // Get all dishes for a specific category (paginated)
 exports.getDishesByCategoryId = async (req, res) => {
     const { categoryId } = req.params;
+    const { sortBy, sortOrder } = req.query;
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 10;
     const offset = (page - 1) * limit;
@@ -140,7 +141,14 @@ exports.getDishesByCategoryId = async (req, res) => {
 
         const whereClause = `WHERE ${conditions.join(' AND ')}`;
 
-        const dishesQuery = `SELECT * FROM dishes ${whereClause} ORDER BY created_at DESC LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
+        // --- Sorting Logic ---
+        // Whitelist columns to prevent SQL injection to prevent SQL injection
+        const allowedSortBy = ['name', 'price', 'created_at', 'is_available'];
+        const validSortBy = allowedSortBy.includes(sortBy) ? sortBy : 'created_at';
+        const validSortOrder = sortOrder?.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
+        const orderByClause = `ORDER BY ${validSortBy} ${validSortOrder}, id ASC`;
+
+        const dishesQuery = `SELECT * FROM dishes ${whereClause} ${orderByClause} LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
         const countQuery = `SELECT COUNT(*) FROM dishes ${whereClause}`;
 
         const dishesQueryParams = [...queryParams, limit, offset];

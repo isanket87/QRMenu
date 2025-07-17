@@ -95,6 +95,7 @@ exports.getAllUsers = async (req, res) => {
     const perPage = parseInt(req.query.limit, 10) || 10;
     const offset = (currentPage - 1) * perPage;
     const search = req.query.search || '';
+    const { sortBy, sortOrder } = req.query;
 
     try {
         let baseQuery = 'FROM users';
@@ -108,8 +109,15 @@ exports.getAllUsers = async (req, res) => {
             paramIndex++;
         }
 
+        // --- Sorting Logic ---
+        // Whitelist columns to prevent SQL injection
+        const allowedSortBy = ['id', 'full_name', 'business_name', 'email','city','state','country' ,'role', 'status', 'created_at'];
+        const validSortBy = allowedSortBy.includes(sortBy) ? sortBy : 'created_at';
+        const validSortOrder = sortOrder?.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
+        const orderByClause = `ORDER BY ${validSortBy} ${validSortOrder}, id ASC`;
+
         const usersResult = await pool.query(
-            `SELECT ${userFieldsToReturn} ${baseQuery}${whereClause} ORDER BY id LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`,
+            `SELECT ${userFieldsToReturn} ${baseQuery}${whereClause} ${orderByClause} LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`,
             [...queryParams, perPage, offset]
         );
         const countResult = await pool.query(

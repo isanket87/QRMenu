@@ -45,7 +45,7 @@ exports.bulkUpdateCategoryDisplayOrder = async (req, res) => {
     }
 
     if (validationErrors.length > 0) {
-        return res.status(400).json({ message: 'Invalid category update data.', errors: validationErrors });
+        return res.status(400).json({ message:  validationErrors[0] });
     }
 
     const client = await pool.connect();

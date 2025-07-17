@@ -35,7 +35,7 @@ const register = async (req, res) => {
     }
 
     if (errors.length > 0) {
-        return res.status(400).json({ message: 'Validation failed.', errors });
+        return res.status(400).json({ message: errors[0] });
     }
 
     try {

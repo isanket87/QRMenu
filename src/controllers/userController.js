@@ -156,3 +156,78 @@ exports.getUserById = async (req, res) => {
         res.status(400).json({ error: err.message });
     }
 };
+
+// Get dashboard stats for the logged-in user
+exports.getUserDashboardStats = async (req, res) => {
+    const userId = req.user?.id;
+
+    if (!userId) {
+        // This check is slightly redundant if `protect` middleware is used, but good for safety
+        return res.status(401).json({ error: 'Unauthorized: User not identified.' });
+    }
+
+    try {
+        // Query for active category count
+        const categoryCountQuery = pool.query(
+            `SELECT COUNT(*) FROM categories WHERE created_by = $1 AND status = true`,
+            [userId]
+        );
+
+        // Query for active dish count
+        const dishCountQuery = pool.query(
+            `SELECT COUNT(*) FROM dishes WHERE created_by = $1 AND status = true`,
+            [userId]
+        );
+
+        // Query for recent 5 dishes, including category name for context
+        const recentDishesQuery = pool.query(
+            `SELECT d.*, c.name as category_name
+             FROM dishes d
+             LEFT JOIN categories c ON d.category_id = c.id
+             WHERE d.created_by = $1
+             ORDER BY d.created_at DESC
+             LIMIT 5`,
+            [userId]
+        );
+
+        // Execute all queries in parallel for efficiency
+        const [categoryCountResult, dishCountResult, recentDishesResult] =
+            await Promise.all([categoryCountQuery, dishCountQuery, recentDishesQuery]);
+
+        const categorycount = parseInt(categoryCountResult.rows[0].count, 10);
+        const fooditemcount = parseInt(dishCountResult.rows[0].count, 10);
+        const recent_food_item = recentDishesResult.rows;
+
+        res.json({ categorycount, fooditemcount, recent_food_item });
+    } catch (err) {
+        console.error('Error fetching user dashboard stats:', err.message, err.stack);
+        res.status(500).json({ error: 'Server error while fetching dashboard stats.' });
+    }
+};
+
+// Get admin dashboard stats (user count and recent users)
+exports.getAdminDashboardStats = async (req, res) => {
+    try {
+        // Query for total user count
+        const userCountQuery = pool.query('SELECT COUNT(*) FROM users');
+
+        // Query for the 5 most recent users, returning only safe fields
+        const recentUsersQuery = pool.query(
+            `SELECT ${userFieldsToReturn} FROM users ORDER BY created_at DESC LIMIT 5`
+        );
+
+        // Execute all queries in parallel for efficiency
+        const [userCountResult, recentUsersResult] = await Promise.all([
+            userCountQuery,
+            recentUsersQuery,
+        ]);
+
+        const userCount = parseInt(userCountResult.rows[0].count, 10);
+        const recentUsers = recentUsersResult.rows;
+
+        res.json({ userCount, recentUsers });
+    } catch (err) {
+        console.error('Error fetching admin dashboard stats:', err.message, err.stack);
+        res.status(500).json({ error: 'Server error while fetching admin dashboard stats.' });
+    }
+};

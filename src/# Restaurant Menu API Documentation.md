@@ -197,6 +197,12 @@ If all requested updates are successful.
 
 ---
 
+### Get Public Dishes for a User
+**GET** `/api/dishes/public/user/:userId`
+Retrieves a list of all active and available dishes for a given user ID. No authentication is required. This is suitable for displaying a public menu.
+
+---
+
 ### Get Dish by ID
 **GET** `/api/dishes/:id`
 

@@ -351,3 +351,25 @@ exports.getAdminCategoriesForUser = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+// Public API: Get all categories by user ID (no pagination)
+exports.getPublicCategoriesByUserId = async (req, res) => {
+    const { userId } = req.params;
+
+    if (!userId) {
+        return res.status(400).json({ message: 'User ID is required in the path.' });
+    }
+
+    try {
+        const result = await pool.query(
+            `SELECT * FROM categories WHERE created_by = $1 AND status = true ORDER BY display_order ASC, id ASC`,
+            [userId]
+        );
+        res.json({
+            data: result.rows
+        });
+    } catch (err) {
+        console.error('Error fetching public categories by user ID:', err.message, err.stack);
+        res.status(500).json({ message: 'Server error while fetching user categories.' });
+    }
+};

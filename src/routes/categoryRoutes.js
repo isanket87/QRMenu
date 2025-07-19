@@ -4,6 +4,16 @@ const categoryController = require('../controllers/categoryController');
 const { protect } = require('../middleware/authMiddleware');
 const authorizeRoles = require('../middleware/roleMiddleware');
 
+// --- PUBLIC ROUTES ---
+
+// Get public categories by user ID
+router.get('/public/user/:userId', categoryController.getPublicCategoriesByUserId);
+
+// Get a single category by its ID
+router.get('/:id', categoryController.getCategoryById);
+
+// --- PROTECTED ROUTES ---
+
 // Create - accessible by user or super_admin
 router.post('/', protect, authorizeRoles('admin','client', 'superadmin'), categoryController.createCategory);
 
@@ -26,7 +36,8 @@ router.get(
 // Get all categories for a specific user by their ID (admin or super_admin access)
 router.get(
     '/by-user/:userId',
-    authorizeRoles('admin','client', 'superadmin'), // Or adjust roles as needed
+    protect,
+    authorizeRoles('admin','client', 'superadmin'),
     categoryController.getAdminCategoriesForUser // Reuses the existing controller logic
 );
 
@@ -35,13 +46,16 @@ router.get(
 router.put(
     '/bulk-update-order',
     protect,
+    authorizeRoles('admin', 'client', 'superadmin'),
     categoryController.bulkUpdateCategoryDisplayOrder
 );
 
-// Update
+// --- DYNAMIC ROUTES (PROTECTED) ---
+
+// Update a category
 router.put('/:id', protect, categoryController.updateCategory);
 
-// Soft delete
+// Delete a category
 router.delete('/:id', protect, categoryController.hardDeleteCategory);
 
 

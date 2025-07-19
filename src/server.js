@@ -37,10 +37,13 @@ const limiter = rateLimit({
 
 app.use(limiter);
 
+
 app.use('/api/auth', authRoutes); // Add auth routes, prefixed with /api/auth
-app.use('/api/categories', protect, categoryRoutes); // Protect category routes
-app.use('/api/dish', protect, dishRoutes); // Protect dish routes
+app.use('/api/categories', categoryRoutes); // Protection is now handled inside the route file
+app.use('/api/dish', dishRoutes); // Renamed and protection is now handled inside the route file
 app.use('/api/user', protect, userRoutes); // Protect user routes
+
+
 
 app.get('/', (req, res) => {
     res.send('QR Menu Menu Backend is running!');

@@ -319,3 +319,33 @@ exports.hardDeleteDish = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+// Public API: Get all dishes by user ID (no pagination, no authentication required)
+exports.getPublicDishesByUserId = async (req, res) => {
+    const { userId } = req.params;
+
+    if (!userId) {
+        return res.status(400).json({ message: 'User ID is required in the path.' });
+    }
+
+    try {
+        // Select only the fields necessary for public display
+        const publicFields = 'd.id, d.name, d.description, d.price, d.image_url, d.is_available, d.category_id, c.name as category_name';
+
+        const dishesQuery = `
+            SELECT ${publicFields}
+            FROM dishes d
+            LEFT JOIN categories c ON d.category_id = c.id
+            WHERE d.created_by = $1 AND d.status = true AND d.is_available = true
+            ORDER BY d.created_at DESC
+        `;
+        const dishesResult = await pool.query(dishesQuery, [userId]);
+
+        res.json({
+            data: dishesResult.rows
+        });
+    } catch (err) {
+        console.error('Error fetching public dishes by user ID:', err.message, err.stack);
+        res.status(500).json({ message: 'Server error while fetching user dishes.' });
+    }
+};

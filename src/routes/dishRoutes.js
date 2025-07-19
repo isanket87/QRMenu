@@ -3,6 +3,19 @@ const router = express.Router();
 const dishController = require('../controllers/dishController');
 const { protect } = require('../middleware/authMiddleware');
 
+// --- PUBLIC ROUTES ---
+
+// Get public dishes by a specific user ID
+router.get('/public/user/:userId', dishController.getPublicDishesByUserId);
+
+// Get independent dishes (no category)
+router.get('/independent', dishController.getIndependentDishes);
+
+// Get all dishes for a specific category (paginated)
+router.get('/category/:categoryId', dishController.getDishesByCategoryId);
+
+// --- PROTECTED ROUTES ---
+
 // Create dish for the logged-in user
 router.post('/', protect, dishController.createDish);
 
@@ -12,19 +25,15 @@ router.get('/', protect, dishController.getDishes);
 // Get all dishes for the logged-in user without pagination
 router.get('/all', protect, dishController.getAllMyDishes);
 
-// Get independent dishes (no category)
-router.get('/independent', dishController.getIndependentDishes);
+// --- DYNAMIC ROUTES (MUST BE LAST) ---
 
-// Get by id
+// Get a single dish by its ID (publicly accessible)
 router.get('/:id', dishController.getDishById);
 
-// Get all dishes for a specific category (paginated)
-router.get('/category/:categoryId', dishController.getDishesByCategoryId);
-
-// Update
+// Update a dish
 router.put('/:id', protect, dishController.updateDish);
 
-// Soft delete
+// Delete a dish
 router.delete('/:id', protect, dishController.hardDeleteDish);
 
 module.exports = router;

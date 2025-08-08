@@ -2,8 +2,9 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const userModel = require('../models/userModel'); // Ensure userModel is imported
-const QRCode = require('qrcode'); // Import qrcode library
-const cloudinary = require('cloudinary').v2; // Import cloudinary
+const QRCode = require('qrcode');
+const cloudinary = require('cloudinary').v2;
+const { encrypt } = require('../utils/cryptoUtils'); // Corrected path to lowercase 'utils'
 require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -50,20 +51,26 @@ const register = async (req, res) => {
 
         // --- QR Code Generation and Cloudinary Upload ---
         if (newUser && newUser.id) {
+            // Encrypt the user ID to use in the URL
+            const encryptedUserId = encrypt(newUser.id.toString());
+
             // Construct the URL that the QR code will point to.
-            // Assuming a public menu page for the user, e.g., /menu/:userId
-            const userMenuUrl = `${process.env.APP_BASE_URL}/menu/${newUser.id}`;
+            // The URL now contains the encrypted user ID.
+            console.log(encryptedUserId)
+            const userMenuUrl = ` https://qa-menu-admin-panel.vercel.app/${encryptedUserId}`;
+
+            console.log(`User menu URL for QR code: ${userMenuUrl}`);
             let qrCodeUrl = null;
 
             try {
-                // Generate QR code as a data URL (base64 encoded image)
+                // Generate QR code from the user's unique menu URL
                 const qrCodeDataUrl = await QRCode.toDataURL(userMenuUrl);
 
                 // Upload to Cloudinary
                 const uploadResult = await cloudinary.uploader.upload(qrCodeDataUrl, {
                     folder: `qrmenu/user_qrcodes`, // Optional: organize uploads in a specific folder
                     public_id: `user_${newUser.id}_qr`, // Optional: unique public ID for easy retrieval
-                    overwrite: true // Overwrite if a QR code for this user already exists (e.g., on re-registration or update)
+                    overwrite: true // Overwrite if a QR code for this user already exists
                 });
 
                 qrCodeUrl = uploadResult.secure_url;

@@ -15,7 +15,7 @@ router.get('/:id', categoryController.getCategoryById);
 // --- PROTECTED ROUTES ---
 
 // Create - accessible by user or super_admin
-router.post('/', protect, authorizeRoles('admin','client', 'superadmin'), categoryController.createCategory);
+router.post('/', protect, categoryController.createCategory);
 
 // Get all categories by the logged-in user
 router.get('/', protect, categoryController.getCategoriesByUserId);

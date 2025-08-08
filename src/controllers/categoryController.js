@@ -365,9 +365,9 @@ exports.getPublicCategoriesByUserId = async (req, res) => {
             `SELECT * FROM categories WHERE created_by = $1 AND status = true ORDER BY display_order ASC, id ASC`,
             [userId]
         );
-        res.json({
-            data: result.rows
-        });
+        res.json(
+             result.rows
+        );
     } catch (err) {
         console.error('Error fetching public categories by user ID:', err.message, err.stack);
         res.status(500).json({ message: 'Server error while fetching user categories.' });

@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const userModel = require('../models/userModel'); // Ensure userModel is imported
 const QRCode = require('qrcode');
 const cloudinary = require('cloudinary').v2;
-const { encrypt } = require('../utils/cryptoUtils'); // Corrected path to lowercase 'utils'
+const { encrypt } = require('../Utils/cryptoUtils'); // Corrected path to lowercase 'utils'
 require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -58,8 +58,6 @@ const register = async (req, res) => {
             // The URL now contains the encrypted user ID.
             console.log(encryptedUserId)
             const userMenuUrl = ` https://qa-menu-admin-panel.vercel.app/${encryptedUserId}`;
-
-            console.log(`User menu URL for QR code: ${userMenuUrl}`);
             let qrCodeUrl = null;
 
             try {

@@ -9,6 +9,9 @@ const authorizeRoles = require('../middleware/roleMiddleware');
 // Get public categories by user ID
 router.get('/public/user/:userId', categoryController.getPublicCategoriesByUserId);
 
+// Get all categories by the logged-in user without pagination
+router.get('/all', protect, categoryController.getAllMyCategories);
+
 // Get a single category by its ID
 router.get('/:id', categoryController.getCategoryById);
 
@@ -20,8 +23,7 @@ router.post('/', protect, categoryController.createCategory);
 // Get all categories by the logged-in user
 router.get('/', protect, categoryController.getCategoriesByUserId);
 
-// Get all categories by the logged-in user without pagination
-router.get('/all', protect, categoryController.getAllMyCategories);
+
 
 // Get by id - This should come after more specific string routes
 router.get('/:id', categoryController.getCategoryById);

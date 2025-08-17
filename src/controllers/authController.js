@@ -46,7 +46,7 @@ const register = async (req, res) => {
         }
 
         const newUser = await userModel.createUser({
-            fullName, businessName, phoneNumber, email, password, city, state, country, role: (role || 'user').toUpperCase()
+            fullName, businessName, phoneNumber, email, password, city, state, country, role: (role || 'client').toUpperCase()
         });
 
         // --- QR Code Generation and Cloudinary Upload ---

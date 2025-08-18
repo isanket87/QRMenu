@@ -52,7 +52,7 @@ const register = async (req, res) => {
         // --- QR Code Generation and Cloudinary Upload ---
         if (newUser && newUser.id) {
             // Encrypt the user ID to use in the URL
-            const encryptedUserId = encrypt(newUser.id.toString());
+            const encryptedUserId = encrypt(newUser.id);
 
             // Construct the URL that the QR code will point to.
             // The URL now contains the encrypted user ID.

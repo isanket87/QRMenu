@@ -12,11 +12,17 @@ if (!secretKey) {
  * @param {string} text The text to encrypt.
  * @returns {string} The URL-safe, encrypted string.
  */
- function encrypt(text) {
-    if (!text) return "";
-    // Encrypt the text using AES encryption
-    const encrypted = CryptoJS.AES.encrypt(text, secretKey).toString();
-    return encrypted.toString();
+//  function encrypt(text) {
+//     if (!text) return "";
+//     // Encrypt the text using AES encryption
+//     const encrypted = CryptoJS.AES.encrypt(text, secretKey).toString();
+//     return encrypted.toString();
+//   }
+    const SECRET = BigInt("98765432101234567890987654321");
+
+  // ---------- ENCODE ----------
+  function encrypt(n) {
+    return (BigInt(n) * SECRET).toString(); // gives huge number
   }
 /**
  * Decrypts a URL-safe, encrypted string.

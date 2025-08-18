@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const userModel = require('../models/userModel'); // Ensure userModel is imported
 const QRCode = require('qrcode');
 const cloudinary = require('cloudinary').v2;
-const { encrypt } = require('../Utils/cryptoUtils'); // Corrected path to lowercase 'utils'
+const  crypto  = require('../Utils/cryptoUtils'); // Corrected path to lowercase 'utils'
 require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -52,8 +52,8 @@ const register = async (req, res) => {
         // --- QR Code Generation and Cloudinary Upload ---
         if (newUser && newUser.id) {
             // Encrypt the user ID to use in the URL
-            const encryptedUserId = encrypt(newUser.id);
-
+            console.log(newUser.id)
+            const encryptedUserId = crypto.encrypt(newUser.id);
             // Construct the URL that the QR code will point to.
             // The URL now contains the encrypted user ID.
             console.log(encryptedUserId)

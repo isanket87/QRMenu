@@ -24,6 +24,10 @@ if (!secretKey) {
   function encrypt(n) {
     return (BigInt(n) * SECRET).toString(); // gives huge number
   }
+
+  function decodeNumber(bigStr) {
+  return (BigInt(bigStr) / SECRET).toString(); // back to original
+}
 /**
  * Decrypts a URL-safe, encrypted string.
  * @param {string} encryptedText The URL-safe, encrypted text.
@@ -36,4 +40,4 @@ function decrypt(encryptedText) {
   return bytes.toString(CryptoJS.enc.Utf8);
 }
 
-module.exports = { encrypt, decrypt };
+module.exports = { encrypt, decrypt, decodeNumber };

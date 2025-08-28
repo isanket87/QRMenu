@@ -99,12 +99,13 @@ exports.getAllUsers = async (req, res) => {
 
     try {
         let baseQuery = 'FROM users';
-        let whereClause = '';
+        // Exclude SUPER_ADMIN from the list of users that can be managed here.
+        let whereClause = " WHERE role != 'SUPER_ADMIN'";
         let queryParams = [];
         let paramIndex = 1;
 
         if (search) {
-            whereClause = ` WHERE full_name ILIKE $${paramIndex} OR email ILIKE $${paramIndex}`;
+            whereClause += ` AND (full_name ILIKE $${paramIndex} OR email ILIKE $${paramIndex})`;
             queryParams.push(`%${search}%`);
             paramIndex++;
         }

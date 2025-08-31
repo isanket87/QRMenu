@@ -100,7 +100,7 @@ exports.getAllUsers = async (req, res) => {
     try {
         let baseQuery = 'FROM users';
         // Exclude SUPER_ADMIN from the list of users that can be managed here.
-        let whereClause = " WHERE role != 'SUPER_ADMIN'";
+        let whereClause = " WHERE role != 'SUPERADMIN'";
         let queryParams = [];
         let paramIndex = 1;
 

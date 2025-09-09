@@ -115,7 +115,7 @@ const login = async (req, res) => {
     try {
         const user = await userModel.findUserByEmail(email);
         if (!user || !(await bcrypt.compare(password, user.password))) {
-            return res.status(200).json({ message: 'Invalid credentials.' });
+            return res.status(401).json({ message: 'Invalid credentials.' });
         }
 
         // Prevent inactive users from logging in

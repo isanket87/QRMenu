@@ -210,11 +210,13 @@ exports.getUserDashboardStats = async (req, res) => {
 exports.getAdminDashboardStats = async (req, res) => {
     try {
         // Query for total user count
-        const userCountQuery = pool.query('SELECT COUNT(*) FROM users');
+        const userCountQuery = pool.query("SELECT COUNT(*) FROM users WHERE role = 'CLIENT'");
 
         // Query for the 5 most recent users, returning only safe fields
         const recentUsersQuery = pool.query(
-            `SELECT ${userFieldsToReturn} FROM users ORDER BY created_at DESC LIMIT 5`
+            `SELECT ${userFieldsToReturn} FROM users 
+             WHERE role = 'client' 
+             ORDER BY created_at DESC LIMIT 5`
         );
 
         // Execute all queries in parallel for efficiency

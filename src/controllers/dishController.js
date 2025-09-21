@@ -13,8 +13,9 @@ exports.createDish = async (req, res) => {
     try {
         const result = await pool.query(
             `INSERT INTO dishes
-            (category_id, name, description, price, image_url, is_available, created_by, status)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+            (category_id, name, description, price, image_url, is_available, created_by, status) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
+            RETURNING id, category_id, name, description, price::int, image_url, is_available, status, created_by, created_at, updated_at`,
             [category_id || null, name, description || null, price, image_url || null, is_available ?? true, created_by, true]
         );
         res.message = 'Food item created successfully';
@@ -55,7 +56,7 @@ exports.getDishes = async (req, res) => {
         const whereClause = `WHERE ${conditions.join(' AND ')}`;
 
         const dishesQuery = `
-            SELECT d.*, c.name AS category_name
+            SELECT d.id, d.category_id, d.name, d.description, d.price::int, d.image_url, d.is_available, d.status, d.created_by, d.created_at, d.updated_at, c.name AS category_name
             FROM dishes d
             LEFT JOIN categories c ON d.category_id = c.id
             ${whereClause}
@@ -111,7 +112,7 @@ exports.getAllMyDishes = async (req, res) => {
 
         const whereClause = `WHERE ${conditions.join(' AND ')}`;
 
-        const dishesQuery = `SELECT * FROM dishes ${whereClause} ORDER BY created_at DESC`;
+        const dishesQuery = `SELECT id, category_id, name, description, price::int, image_url, is_available, status, created_by, created_at, updated_at FROM dishes ${whereClause} ORDER BY created_at DESC`;
 
         const dishesResult = await pool.query(dishesQuery, queryParams);
 
@@ -148,7 +149,7 @@ exports.getDishesByCategoryId = async (req, res) => {
         const validSortOrder = sortOrder?.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
         const orderByClause = `ORDER BY ${validSortBy} ${validSortOrder}, id ASC`;
 
-        const dishesQuery = `SELECT * FROM dishes ${whereClause} ${orderByClause} LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
+        const dishesQuery = `SELECT id, category_id, name, description, price::int, image_url, is_available, status, created_by, created_at, updated_at FROM dishes ${whereClause} ${orderByClause} LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
         const countQuery = `SELECT COUNT(*) FROM dishes ${whereClause}`;
 
         const dishesQueryParams = [...queryParams, limit, offset];
@@ -180,7 +181,7 @@ exports.getIndependentDishes = async (req, res) => {
     }
     try {
         const result = await pool.query(
-            `SELECT * FROM dishes WHERE created_by = $1 AND category_id IS NULL AND status = true`,
+            `SELECT id, category_id, name, description, price::int, image_url, is_available, status, created_by, created_at, updated_at FROM dishes WHERE created_by = $1 AND category_id IS NULL AND status = true`,
             [userId]
         );
         res.json(result.rows);
@@ -195,7 +196,7 @@ exports.getDishById = async (req, res) => {
     const { id } = req.params;
     try {
         const result = await pool.query(
-            `SELECT * FROM dishes WHERE id = $1`,
+            `SELECT id, category_id, name, description, price::int, image_url, is_available, status, created_by, created_at, updated_at FROM dishes WHERE id = $1`,
             [id]
         );
         if (result.rows.length === 0) {
@@ -216,7 +217,7 @@ exports.getDishByName = async (req, res) => {
     }
     try {
         const result = await pool.query(
-            `SELECT * FROM dishes WHERE created_by = $1 AND LOWER(name) = $2 AND status = true`,
+            `SELECT id, category_id, name, description, price::int, image_url, is_available, status, created_by, created_at, updated_at FROM dishes WHERE created_by = $1 AND LOWER(name) = $2 AND status = true`,
             [userId, name.toLowerCase()]
         );
         if (result.rows.length === 0) {
@@ -237,7 +238,7 @@ exports.searchDishes = async (req, res) => {
     }
     try {
         const result = await pool.query(
-            `SELECT * FROM dishes WHERE created_by = $1 AND status = true AND LOWER(name) LIKE $2`,
+            `SELECT id, category_id, name, description, price::int, image_url, is_available, status, created_by, created_at, updated_at FROM dishes WHERE created_by = $1 AND status = true AND LOWER(name) LIKE $2`,
             [userId, `%${q?.toLowerCase() || ''}%`]
         );
         res.json(result.rows);
@@ -268,7 +269,7 @@ exports.updateDish = async (req, res) => {
                 updated_by = $8,
                 updated_at = NOW()
             WHERE id = $9
-            RETURNING *`,
+            RETURNING id, category_id, name, description, price::int, image_url, is_available, status, created_by, created_at, updated_at`,
             [
                 category_id,
                 name,
@@ -330,7 +331,7 @@ exports.getPublicDishesByUserId = async (req, res) => {
 
     try {
         // Select only the fields necessary for public display
-        const publicFields = 'd.id, d.name, d.description, d.price, d.image_url, d.is_available, d.category_id, c.name as category_name';
+        const publicFields = 'd.id, d.name, d.description, d.price::int, d.image_url, d.is_available, d.category_id, c.name as category_name';
 
         const dishesQuery = `
             SELECT ${publicFields}

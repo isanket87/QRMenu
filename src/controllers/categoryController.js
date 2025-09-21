@@ -244,8 +244,10 @@ exports.updateCategory = async (req, res) => {
     const { id } = req.params;
     const { name, description, display_order, status } = req.body;
     const updated_by = req.user?.id;
+    const client = await pool.connect();
     try {
-        const result = await pool.query(
+        await client.query('BEGIN');
+        const result = await client.query(
             `UPDATE categories SET
                 name = COALESCE($1, name),
                 description = COALESCE($2, description),
@@ -258,14 +260,27 @@ exports.updateCategory = async (req, res) => {
             [name, description, display_order, typeof status === 'boolean' ? status : null, updated_by, id]
         );
         if (result.rows.length === 0) {
+            await client.query('ROLLBACK');
             return res.status(404).json({ message: 'Category not found' });
         }
+
+        // If the category status is being set to false, also deactivate its dishes
+        if (status === false) {
+            await client.query(
+                `UPDATE dishes SET status = false, updated_by = $1, updated_at = NOW() WHERE category_id = $2`,
+                [updated_by, id]
+            );
+        }
+
+        await client.query('COMMIT');
         res.message = 'Category updated successfully';
         res.json(result.rows[0]);
     } catch (err) {
-        console.error('Error updating:', err.message, err.stack);
+        await client.query('ROLLBACK');
         console.error('Error updating category:', err.message);
         res.status(500).json({ message: 'Server error' });
+    } finally {
+        client.release();
     }
 };
 
@@ -291,27 +306,40 @@ exports.updateCategory = async (req, res) => {
 // Hard delete category
 exports.hardDeleteCategory = async (req, res) => {
     const { id } = req.params;
-    const deleted_by = req.user?.id;
+    const client = await pool.connect();
     try {
-        // Optionally, you can check if the category exists before deleting
-        const checkResult = await pool.query(
+        await client.query('BEGIN');
+
+        // Check if the category exists before deleting
+        const checkResult = await client.query(
             `SELECT * FROM categories WHERE id = $1`,
             [id]
         );
         if (checkResult.rows.length === 0) {
+            await client.query('ROLLBACK');
             return res.status(404).json({ message: 'Category not found' });
         }
 
-        // Perform hard delete
-        await pool.query(
+        // First, delete associated food items (dishes)
+        await client.query(
+            `DELETE FROM dishes WHERE category_id = $1`,
+            [id]
+        );
+
+        // Then, perform hard delete on the category
+        await client.query(
             `DELETE FROM categories WHERE id = $1`,
             [id]
         );
-            res.message = 'User deleted successfully';
-        res.json({ message: 'Category permanently deleted.' });
+
+        await client.query('COMMIT');
+        res.json({ message: 'Category and associated food items permanently deleted.' });
     } catch (err) {
+        await client.query('ROLLBACK');
         console.error('Error hard deleting category:', err.message);
         res.status(500).json({ message: 'Server error' });
+    } finally {
+        client.release();
     }
 };
 

@@ -9,6 +9,7 @@ const authRoutes = require('./routes/authRoutes'); // Import auth routes
 const categoryRoutes = require('./routes/categoryRoutes');
 const dishRoutes = require('./routes/dishRoutes'); // Import dish routes
 const responseFormatter = require('./middleware/responseFormatter');
+const contactRoutes = require('./routes/contactRoutes'); // Import contact routes
 const { protect } = require('./middleware/authMiddleware'); // Import protect middleware
 const userRoutes = require('./routes/userRoutes'); // Import user routes
 // No need to explicitly import db.js here, as it connects automatically
@@ -41,6 +42,7 @@ app.use(limiter);
 app.use('/api/auth', authRoutes); // Add auth routes, prefixed with /api/auth
 app.use('/api/categories', categoryRoutes); // Protection is now handled inside the route file
 app.use('/api/dish', dishRoutes); // Renamed and protection is now handled inside the route file
+app.use('/api/contact', contactRoutes); // Add contact routes
 app.use('/api/user', protect, userRoutes); // Protect user routes
 
 

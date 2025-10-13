@@ -2,22 +2,22 @@ const pool = require('../config/db');
 const bcrypt = require('bcryptjs');
 
 // Define a common list of user fields to return, excluding sensitive ones
-const userFieldsToReturn = 'id, full_name, business_name, phone_number, email, city, state, country, role, status, created_at, updated_at, qr_code_url';
+const userFieldsToReturn = 'id, full_name, business_name, phone_number, email, city, state, country, role, status, created_at, updated_at, qr_code_url, is_plan';
 
 // Add a new user (admin/super_admin only)
 exports.addUser = async (req, res) => {
     const {
         fullName, businessName, phoneNumber, email, password,
-        city, state, country, role = 'user', isActive = true
+        city, state, country, role = 'user', isActive = true, isPlan = false
     } = req.body;
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const userRole = role.toUpperCase(); // Convert role to uppercase
         const result = await pool.query(
-            `INSERT INTO users 
-            (full_name, business_name, phone_number, email, password, city, state, country, role, status)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING ${userFieldsToReturn}`,
-            [fullName, businessName, phoneNumber, email, hashedPassword, city, state, country, userRole, isActive]
+            `INSERT INTO users
+            (full_name, business_name, phone_number, email, password, city, state, country, role, status, is_plan)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING ${userFieldsToReturn}`,
+            [fullName, businessName, phoneNumber, email, hashedPassword, city, state, country, userRole, isActive, isPlan]
         );
         // The RETURNING clause already selected the safe fields
         if (result.rows.length > 0) {
@@ -35,7 +35,7 @@ exports.updateUser = async (req, res) => {
     const id = req.params.id;
     const {
         fullName, businessName, phoneNumber, email, password,
-        city, state, country, role, isActive, status // Accept status from body
+        city, state, country, role, isActive, status, isPlan // Accept status and isPlan from body
     } = req.body;
     try {
         let hashedPassword;
@@ -54,6 +54,7 @@ exports.updateUser = async (req, res) => {
         if (country !== undefined) fields.country = country;
         if (isActive !== undefined) fields.status = isActive;
         if (status !== undefined) fields.status = status; // Allow direct status update
+        if (isPlan !== undefined) fields.is_plan = isPlan;
         if (role !== undefined) fields.role = role.toUpperCase();
         if (hashedPassword) fields.password = hashedPassword;
 

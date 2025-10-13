@@ -17,7 +17,7 @@ cloudinary.config({
 });
 
 const register = async (req, res) => {
-    const { fullName, businessName, phoneNumber, email, password, city, state, country, role } = req.body;
+    const { fullName, businessName, phoneNumber, email, password, city, state, country, role, isPlan } = req.body;
 
     // More specific validation
     const errors = [];
@@ -46,7 +46,7 @@ const register = async (req, res) => {
         }
 
         const newUser = await userModel.createUser({
-            fullName, businessName, phoneNumber, email, password, city, state, country, role: (role || 'client').toUpperCase()
+            fullName, businessName, phoneNumber, email, password, city, state, country, role: (role || 'client').toUpperCase(), isPlan: isPlan || false
         });
 
         // --- QR Code Generation and Cloudinary Upload ---
@@ -124,7 +124,7 @@ const login = async (req, res) => {
         }
 
         const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
-        res.json({ token, user: { id: user.id, fullName: user.full_name, email: user.email ,qu_url: user.qr_code_url, role: user.role.toUpperCase() } });
+        res.json({ token, user: { id: user.id, fullName: user.full_name, email: user.email ,qu_url: user.qr_code_url, role: user.role.toUpperCase(), isPlan: user.is_plan } });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ message: 'Server error during login.' });

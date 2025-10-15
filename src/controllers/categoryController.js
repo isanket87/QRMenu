@@ -86,7 +86,7 @@ exports.bulkUpdateCategoryDisplayOrder = async (req, res) => {
 
 // Get all categories created by a specific user
 exports.getCategoriesByUserId = async (req, res) => {
-    const userId = req.user?.id;
+    const userId =  parseInt(req.query.userId, 10) ||req.user?.id;
 
     if (!userId) {
         return res.status(401).json({ message: 'Unauthorized: User not identified.' });

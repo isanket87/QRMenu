@@ -28,7 +28,7 @@ exports.createDish = async (req, res) => {
 
 // Get all menu items for a user (paginated, optionally filter by category or search by name)
 exports.getDishes = async (req, res) => {
-    const userId = req.user?.id;
+    const userId =  parseInt(req.query.userId, 10) ||req.user?.id;
     const { category_id, search } = req.query;
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 10;

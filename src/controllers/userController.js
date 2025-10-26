@@ -142,6 +142,22 @@ exports.getAllUsers = async (req, res) => {
     }
 };
 
+// Get all users as a list (no pagination)
+exports.getUserList = async (req, res) => {
+    try {
+        // Exclude SUPER_ADMIN from the list of users that can be managed here.
+        const result = await pool.query(
+            `SELECT ${userFieldsToReturn} FROM users 
+             WHERE role != 'superadmin' 
+             ORDER BY full_name ASC`
+        );
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Error fetching user list:', err.message, err.stack);
+        res.status(500).json({ error: 'Server error while fetching user list.' });
+    }
+};
+
 // Get user by ID
 exports.getUserById = async (req, res) => {
     const { id } = req.params;

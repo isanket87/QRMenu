@@ -180,6 +180,24 @@
 					"response": []
 				},
 				{
+					"name": "Get All Users as List (Admin Only)",
+					"_postman_id": "a3b4c5d6-e7f8-9012-3456-7890abcdef13",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/user/list",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "user", "list"]
+						},
+						"description": "Get all users as a simple list without pagination (admin/super_admin only). This is useful for populating dropdowns or other UI elements where the full list is needed at once."
+					},
+					"response": []
+				},
+				{
 					"name": "Get User by ID (Admin Only)",
 					"_postman_id": "b3c4d5e6-f7a8-9012-3456-7890abcdef12",
 					"request": {

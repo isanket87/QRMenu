@@ -26,7 +26,11 @@ router.get(
     userController.getAllUsers // Supports pagination (e.g., ?page=1&limit=10) and search (e.g., ?q=searchTerm)
 );
 
-
+// New route to get all users as a list without pagination
+router.get(
+    '/list',
+    userController.getUserList
+);
 
 // This new route is for any logged-in user to get their own stats.
 // The `protect` middleware should be applied in server.js for all /api/user routes.

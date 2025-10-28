@@ -191,12 +191,23 @@ exports.getUserDashboardStats = async (req, res) => {
             [userId]
         );
 
+        // Query for inactive category count
+        const inactiveCategoryCountQuery = pool.query(
+            `SELECT COUNT(*) FROM categories WHERE created_by = $1 AND status = false`,
+            [userId]
+        );
+
         // Query for active dish count
         const dishCountQuery = pool.query(
             `SELECT COUNT(*) FROM dishes WHERE created_by = $1 AND status = true`,
             [userId]
         );
 
+        // Query for inactive dish count
+        const inactiveDishCountQuery = pool.query(
+            `SELECT COUNT(*) FROM dishes WHERE created_by = $1 AND status = false`,
+            [userId]
+        );
         // Query for recent 5 dishes, including category name for context
         const recentDishesQuery = pool.query(
             `SELECT d.*, c.name as category_name
@@ -209,14 +220,27 @@ exports.getUserDashboardStats = async (req, res) => {
         );
 
         // Execute all queries in parallel for efficiency
-        const [categoryCountResult, dishCountResult, recentDishesResult] =
-            await Promise.all([categoryCountQuery, dishCountQuery, recentDishesQuery]);
+        const [
+            categoryCountResult,
+            inactiveCategoryCountResult,
+            dishCountResult,
+            inactiveDishCountResult,
+            recentDishesResult,
+        ] = await Promise.all([
+            categoryCountQuery,
+            inactiveCategoryCountQuery,
+            dishCountQuery,
+            inactiveDishCountQuery,
+            recentDishesQuery,
+        ]);
 
         const categorycount = parseInt(categoryCountResult.rows[0].count, 10);
+        const inactive_category_count = parseInt(inactiveCategoryCountResult.rows[0].count, 10);
         const fooditemcount = parseInt(dishCountResult.rows[0].count, 10);
+        const inactive_food_item_count = parseInt(inactiveDishCountResult.rows[0].count, 10);
         const recent_food_item = recentDishesResult.rows;
 
-        res.json({ categorycount, fooditemcount, recent_food_item });
+        res.json({ categorycount, inactive_category_count, fooditemcount, inactive_food_item_count, recent_food_item });
     } catch (err) {
         console.error('Error fetching user dashboard stats:', err.message, err.stack);
         res.status(500).json({ error: 'Server error while fetching dashboard stats.' });

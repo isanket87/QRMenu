@@ -227,7 +227,7 @@ exports.getUserDashboardStats = async (req, res) => {
 exports.getAdminDashboardStats = async (req, res) => {
     try {
         // Query for total user count, excluding superadmins
-        const userCountQuery = pool.query("SELECT COUNT(*) FROM users WHERE role != 'SUPERADMIN'");
+        const userCountQuery = pool.query("SELECT COUNT(*) FROM users WHERE role != 'superadmin'");
 
         // Query for the 5 most recent users, returning only safe fields
         const recentUsersQuery = pool.query(

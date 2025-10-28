@@ -714,6 +714,75 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Contact Submissions",
+			"description": "Endpoints for managing contact form submissions.",
+			"_postman_id": "contact-submissions-folder",
+			"item": [
+				{
+					"name": "Submit Contact Form",
+					"_postman_id": "submit-contact-form",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Jane Doe\",\n    \"email\": \"jane.doe@example.com\",\n    \"subject\": \"Question about API\",\n    \"message\": \"I have a question about integrating with your API.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/contact",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{hostName}}"
+							],
+							"path": [
+								"api",
+								"contact"
+							]
+						},
+						"description": "Allows any user to send a message through the contact form."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Contact Submissions",
+					"_postman_id": "get-all-contact-submissions",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+						],
+						"url": {
+							"raw": "{{protocol}}://{{hostName}}/api/contact?page=1&limit=10&search=question",
+							"protocol": "{{protocol}}",
+							"host": ["{{hostName}}"],
+							"path": ["api", "contact"],
+							"query": [
+								{ "key": "page", "value": "1", "description": "Page number for pagination." },
+								{ "key": "limit", "value": "10", "description": "Number of items per page." },
+								{ "key": "search", "value": "question", "description": "Search term for name, email, or subject.", "disabled": false }
+							]
+						},
+						"description": "Retrieves a paginated list of all contact submissions. Supports searching by name, email, or subject. (Admin only)"
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"variable": [

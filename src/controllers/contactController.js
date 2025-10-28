@@ -35,11 +35,13 @@ exports.getAllSubmissions = async (req, res, next) => {
     const currentPage = parseInt(req.query.page, 10) || 1;
     const perPage = parseInt(req.query.limit, 10) || 10;
     const offset = (currentPage - 1) * perPage;
+    const search = req.query.search || '';
 
     try {
         const { submissions, totalItems } = await contactModel.getAllSubmissions({
             limit: perPage,
             offset,
+            search,
         });
 
         const totalPages = Math.ceil(totalItems / perPage);

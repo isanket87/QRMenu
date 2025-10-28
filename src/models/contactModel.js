@@ -28,15 +28,31 @@ async function createSubmission({ name, email, subject, message }) {
  * @param {number} options.offset - The starting offset.
  * @returns {Promise<object>} An object containing submissions and total count.
  */
-async function getAllSubmissions({ limit, offset }) {
+async function getAllSubmissions({ limit, offset, search }) {
+    const queryParams = [];
+    let whereClause = '';
+    let paramIndex = 1;
+
+    if (search) {
+        whereClause = `WHERE name ILIKE $${paramIndex} OR email ILIKE $${paramIndex} OR subject ILIKE $${paramIndex}`;
+        queryParams.push(`%${search}%`);
+        paramIndex++;
+    }
+
+    const submissionsQuery = `
+        SELECT ${submissionFields} FROM contact_submissions
+        ${whereClause}
+        ORDER BY created_at DESC
+        LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
+
+    const countQuery = `SELECT COUNT(*) FROM contact_submissions ${whereClause}`;
+
     const submissionsResult = await pool.query(
-        `SELECT ${submissionFields} FROM contact_submissions
-         ORDER BY created_at DESC
-         LIMIT $1 OFFSET $2`,
-        [limit, offset]
+        submissionsQuery,
+        [...queryParams, limit, offset]
     );
 
-    const countResult = await pool.query('SELECT COUNT(*) FROM contact_submissions');
+    const countResult = await pool.query(countQuery, queryParams);
 
     return {
         submissions: submissionsResult.rows,

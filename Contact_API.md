@@ -70,13 +70,13 @@ Retrieves a paginated list of all messages submitted through the contact form.
 *   **Access:** Private (Admin only)
 
 **Query Parameters:**
-
 *   `page` (number, optional, defaults to 1): The page number for pagination.
 *   `limit` (number, optional, defaults to 10): The number of items per page.
+*   `search` (string, optional): A search term to filter submissions by name, email, or subject.
 
 **cURL Example:**
 
 ```bash
-curl -X GET "http://localhost:5000/api/contact?page=1&limit=5" \
+curl -X GET "http://localhost:5000/api/contact?page=1&limit=5&search=inquiry" \
 -H "Authorization: Bearer <your_admin_jwt_token>"
 ```

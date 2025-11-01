@@ -320,9 +320,9 @@ exports.hardDeleteCategory = async (req, res) => {
             return res.status(404).json({ message: 'Category not found' });
         }
 
-        // First, delete associated food items (dishes)
+        // First, update associated dishes to have null category_id
         await client.query(
-            `DELETE FROM dishes WHERE category_id = $1`,
+            `UPDATE dishes SET category_id = NULL WHERE category_id = $1`,
             [id]
         );
 
@@ -333,7 +333,7 @@ exports.hardDeleteCategory = async (req, res) => {
         );
 
         await client.query('COMMIT');
-        res.json({ message: 'Category and associated food items permanently deleted.' });
+        res.json({ message: 'Category permanently deleted. Associated dishes are now uncategorized.' });
     } catch (err) {
         await client.query('ROLLBACK');
         console.error('Error hard deleting category:', err.message);

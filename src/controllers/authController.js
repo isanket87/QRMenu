@@ -57,7 +57,7 @@ const register = async (req, res) => {
             // Construct the URL that the QR code will point to.
             // The URL now contains the encrypted user ID.
             console.log(encryptedUserId)
-            const userMenuUrl = ` https://qa-menu-admin-panel.vercel.app/${encryptedUserId}`;
+            const userMenuUrl = ` https://qr-menu-five-rust.vercel.app/${encryptedUserId}`;
             let qrCodeUrl = null;
 
             try {
